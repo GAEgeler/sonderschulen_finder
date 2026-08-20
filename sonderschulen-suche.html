@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonderschulen-Suche · Kanton Schwyz &amp; Region</title>
+<style>
+  :root{
+    --paper:#f7f5f1;
+    --ink:#1c2b2d;
+    --ink-soft:#4a5a5c;
+    --line:#d8d2c4;
+    --red:#a3242c;
+    --red-dark:#7c1a20;
+    --green:#3c6e5a;
+    --amber:#a8711c;
+    --card:#ffffff;
+    --focus:#1c6cff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    line-height:1.45;
+  }
+  .masthead{
+    border-bottom:3px solid var(--red);
+    background:var(--card);
+    padding:22px clamp(16px,4vw,48px) 18px;
+  }
+  .masthead-inner{
+    max-width:1320px;
+    margin:0 auto;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size:clamp(22px,3vw,30px);
+    letter-spacing:.2px;
+    margin:0;
+  }
+  .brand span{color:var(--red);}
+  .brand-sub{
+    margin:2px 0 0;
+    font-size:13px;
+    color:var(--ink-soft);
+    letter-spacing:.3px;
+    text-transform:uppercase;
+  }
+  .kanton-tag{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    color:var(--red-dark);
+    border:1px solid var(--red);
+    border-radius:2px;
+    padding:5px 10px;
+    white-space:nowrap;
+  }
+  main{
+    max-width:1320px;
+    margin:0 auto;
+    padding:28px clamp(16px,4vw,48px) 80px;
+  }
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:20px clamp(16px,3vw,28px);
+    margin-bottom:22px;
+  }
+  .panel h2{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size:18px;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .panel h2 .num{
+    font-family: "Segoe UI", sans-serif;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    background:var(--green);
+    border-radius:50%;
+    width:22px;height:22px;
+    display:inline-flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .panel .hint{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  .row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+  }
+  label{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.3px;
+    display:block;
+    margin-bottom:5px;
+  }
+  input[type=text], input[type=number], textarea{
+    font:inherit;
+    font-size:14px;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfcfa;
+    color:var(--ink);
+    width:100%;
+  }
+  input:focus, textarea:focus, button:focus{
+    outline:2px solid var(--focus);
+    outline-offset:1px;
+  }
+  .field{flex:1 1 220px;}
+  .field.narrow{flex:0 1 140px;}
+  button{
+    font:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:3px;
+    border:1px solid var(--red);
+    background:var(--red);
+    color:#fff;
+    cursor:pointer;
+    letter-spacing:.2px;
+    white-space:nowrap;
+  }
+  button:hover{background:var(--red-dark);}
+  button.secondary{
+    background:transparent;
+    color:var(--ink);
+    border-color:var(--line);
+  }
+  button.secondary:hover{border-color:var(--ink-soft);}
+  button.tiny{
+    padding:5px 10px;
+    font-size:12px;
+    font-weight:600;
+  }
+  button:disabled{opacity:.5;cursor:not-allowed;}
+
+  /* PILL FILTERS */
+  .pillgroup{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    font-size:13px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+    transition:background .1s,border-color .1s,color .1s;
+  }
+  .pill:hover{border-color:var(--ink-soft);}
+  .pill.active{
+    background:var(--green);
+    border-color:var(--green);
+    color:#fff;
+  }
+  .pill.active.accent-red{background:var(--red);border-color:var(--red);}
+
+  /* KANTON DROPDOWN */
+  .dropdown{position:relative;}
+  .dropdown-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#fdfcfa;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:9px 14px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    min-width:220px;
+    justify-content:space-between;
+  }
+  .dropdown-toggle:hover{border-color:var(--ink-soft);}
+  .dropdown-toggle .chev{font-size:11px;color:var(--ink-soft);}
+  .dropdown-panel{
+    display:none;
+    position:absolute;
+    top:calc(100% + 6px);
+    left:0;
+    z-index:20;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+    box-shadow:0 6px 20px rgba(0,0,0,.12);
+    padding:14px;
+    width:340px;
+    max-height:360px;
+    overflow-y:auto;
+  }
+  .dropdown.open .dropdown-panel{display:block;}
+  .dropdown-quick{display:flex;gap:8px;margin-bottom:10px;}
+  .dropdown-check{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13.5px;
+    padding:5px 2px;
+    cursor:pointer;
+  }
+  .dropdown-check.region{font-weight:700;}
+  .dropdown-divider{border:none;border-top:1px solid var(--line);margin:8px 0;}
+
+  .subtle-label{font-size:12px;color:var(--ink-soft);margin:0 0 6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;}
+  .filter-block{margin-bottom:18px;}
+  .filter-block:last-child{margin-bottom:0;}
+  textarea{min-height:80px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;resize:vertical;}
+  .import-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+  .status-line{font-size:13px;color:var(--ink-soft);margin-top:8px;min-height:18px;}
+  .status-line.ok{color:var(--green);}
+  .status-line.err{color:var(--red-dark);}
+  table{
+    width:max-content;
+    min-width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+  }
+  thead th{
+    text-align:left;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--ink-soft);
+    border-bottom:2px solid var(--ink);
+    padding:8px 10px;
+    white-space:nowrap;
+    background:var(--card);
+    position:sticky;
+    top:0;
+    z-index:2;
+  }
+  thead th.sortable{cursor:pointer;user-select:none;}
+  thead th.sortable:hover{color:var(--ink);}
+  thead th .sort-arrow{font-size:10px;margin-left:3px;color:var(--red);}
+  tbody td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  tbody tr:hover{background:#faf7f0;}
+  .name-cell{
+    font-weight:600;min-width:190px;max-width:230px;
+    position:sticky;left:0;z-index:1;
+    background:var(--card);
+    box-shadow:2px 0 4px rgba(0,0,0,.06);
+  }
+  tbody tr:hover .name-cell{background:#faf7f0;}
+  .bemerkung-cell{color:var(--ink-soft);font-size:12.5px;max-width:150px;}
+  .plaetze-cell{min-width:150px;}
+  .plaetze-select{
+    font:inherit;font-size:12.5px;font-weight:700;
+    padding:5px 8px;border-radius:3px;border:1.5px solid var(--line);
+    width:100%;margin-bottom:4px;cursor:pointer;
+  }
+  .plaetze-select.frei{background:#e4f0e2;border-color:var(--green);color:#2e6b3d;}
+  .plaetze-select.warteliste{background:#f5efe0;border-color:var(--amber);color:#7a5c1a;}
+  .plaetze-select.keine{background:#f2e2df;border-color:var(--red);color:#8a3b2e;}
+  .plaetze-select.unbekannt{background:#f0efe9;border-color:var(--line);color:var(--ink-soft);}
+  .plaetze-date{font-size:11px;color:var(--ink-soft);}
+  .plaetze-date input{font-size:11px;padding:2px 4px;border:1px solid var(--line);border-radius:2px;width:100px;}
+  .kontakt-btn{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:12px;font-weight:600;
+    padding:5px 10px;border-radius:3px;
+    border:1px solid var(--line);background:#fdfcfa;color:var(--ink);
+    text-decoration:none;white-space:nowrap;
+  }
+  .kontakt-btn:hover{border-color:var(--ink-soft);}
+  .kontakt-btn.tel{border-color:var(--green);color:var(--green);font-weight:700;}
+  .kontakt-btn.web{border-color:#2a5a8a;color:#2a5a8a;}
+  .kontakt-btn.search{color:var(--ink-soft);}
+  .kontakt-cell{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+  .badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:700;
+    padding:2px 6px;
+    border-radius:3px;
+    letter-spacing:.2px;
+    margin:1px 2px 1px 0;
+    white-space:nowrap;
+  }
+  .badge.sp-Verhalten{background:#f2e2df;color:#8a3b2e;}
+  .badge.sp-Kognition{background:#e2eaf2;color:#2e5a8a;}
+  .badge.sp-Koerper{background:#e4f0e2;color:#2e6b3d;}
+  .badge.sp-Sprache{background:#f2eadc;color:#8a6a1a;}
+  .badge.sp-none{background:#eee;color:#999;font-weight:600;}
+  .badge.angebot{background:#eee;color:#555;}
+  .badge.stufe{background:#f5efe0;color:#7a5c1a;}
+  .badge.bereich-a{background:#dde8f5;color:#2a4d7a;}
+  .badge.bereich-d{background:#f5dde0;color:#7a2a3a;}
+  .ivse-yes{color:var(--green);font-weight:700;white-space:nowrap;}
+  .ivse-no{color:var(--ink-soft);}
+  .source-tag{font-size:10px;color:var(--ink-soft);font-style:italic;}
+  .dist{font-variant-numeric:tabular-nums;font-weight:700;color:var(--green);white-space:nowrap;}
+  .dist.pending{color:var(--ink-soft);font-weight:400;font-style:italic;}
+  .dist.missing{color:var(--amber);font-weight:400;font-style:italic;}
+  .warn-flag{cursor:help;}
+  .kanton-pill-badge{
+    font-size:12px;font-weight:700;color:var(--ink);
+    background:#eee6d2;border-radius:2px;padding:2px 6px;
+    white-space:nowrap;
+  }
+  .addr-cell input{
+    font-size:12.5px;
+    padding:5px 7px;
+    min-width:190px;
+  }
+  .empty-state{
+    text-align:center;
+    padding:36px 12px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .result-count{font-size:13px;color:var(--ink-soft);margin-bottom:10px;}
+  .foot-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap;}
+  footer{
+    max-width:1320px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 60px;
+    color:var(--ink-soft);font-size:12px;
+  }
+  a{color:var(--red-dark);}
+  .table-scroll{
+    overflow-x:auto;
+    max-height:70vh;
+    overflow-y:auto;
+    border:1px solid var(--line);
+    border-radius:4px;
+    scrollbar-width:auto;
+  }
+  .table-scroll::-webkit-scrollbar{height:12px;width:12px;}
+  .table-scroll::-webkit-scrollbar-thumb{background:#c9c2ae;border-radius:6px;}
+  .table-scroll::-webkit-scrollbar-track{background:#f0ede4;}
+  .scroll-hint{font-size:12px;color:var(--ink-soft);margin:0 0 8px;}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <p class="brand">Sonderschulen<span>·</span>Suche</p>
+      <p class="brand-sub">Verhalten · Kognition · Körper- &amp; Sinnesbehinderungen</p>
+    </div>
+    <div class="kanton-tag">Kanton Schwyz &amp; Nachbarkantone</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ADMIN TOGGLE -->
+  <p style="text-align:right;margin:0 0 8px;">
+    <a href="#" id="adminToggleLink" style="font-size:12px;color:var(--ink-soft);text-decoration:underline;">Daten verwalten</a>
+  </p>
+
+  <!-- STEP 1: DATA (admin only, hidden by default) -->
+  <section class="panel" id="dataAdminPanel" style="display:none;">
+    <h2><span class="num">1</span>Datengrundlage</h2>
+    <p class="hint">Aktuell geladen: <strong id="dataCount">–</strong> Institutionen — deine kuratierte Excel-Liste (Verhalten/Kognition/Körper- und Sinnesbehinderungen) plus IVSE-Bereich-A/D-Einrichtungen der Zielregion. Fehlende Adressen kannst du direkt in der Ergebnistabelle nachtragen.</p>
+
+    <p class="subtle-label">Gemeinsame Datenquelle (GitHub Gist)</p>
+    <p class="hint" style="margin-bottom:8px;">Diese Seite lädt beim Öffnen automatisch den neusten gemeinsamen Stand. Änderungen (Adresse, Freie Plätze) werden automatisch zurückgespeichert — <strong>aber nur, wenn unten ein GitHub-Token hinterlegt ist</strong>. Ohne Token bleiben Änderungen nur lokal in diesem Browser.</p>
+    <div class="import-row">
+      <input type="password" id="githubTokenInput" placeholder="GitHub-Token (nur Berechtigung 'gist') — optional, für Schreibzugriff" style="max-width:420px;">
+      <button id="btnSaveToken" class="secondary">Token speichern</button>
+      <button id="btnSyncNow" class="secondary">Jetzt synchronisieren</button>
+    </div>
+    <p class="status-line" id="syncStatus"></p>
+
+    <div class="import-row" style="margin-top:14px;">
+      <button id="btnLoadStarter" class="secondary">Eingebetteten Startstand neu laden (Fallback, ohne Gist)</button>
+      <button id="btnClear" class="secondary">Liste leeren</button>
+      <label style="margin:0;">
+        <span style="display:inline-block;background:var(--ink);color:#fff;padding:9px 16px;border-radius:3px;font-size:13.5px;font-weight:600;cursor:pointer;">Datei wählen (.csv)
+          <input type="file" id="fileInput" accept=".csv,.txt" style="display:none;">
+        </span>
+      </label>
+      <button id="btnExportCsv" class="secondary">Aktuelle Liste als CSV exportieren</button>
+    </div>
+
+    <p class="subtle-label" style="margin-top:14px;">Oder Zeilen direkt einfügen</p>
+    <textarea id="pasteArea" placeholder="Name;Kanton;Schwerpunkt;IVSE;Angebot;Stufe;Bemerkung;Adresse;PLZ;Ort;Telefon;Website;Email"></textarea>
+    <div class="import-row">
+      <button id="btnAppendPaste">Zeilen hinzufügen</button>
+      <button id="btnReplacePaste" class="secondary">Liste durch Einfügung ersetzen (auch in Gist speichern, falls Token gesetzt)</button>
+    </div>
+    <p class="status-line" id="importStatus"></p>
+  </section>
+
+  <!-- STEP 2: FILTER -->
+  <section class="panel">
+    <h2><span class="num">2</span>Filter</h2>
+
+    <div class="filter-block">
+      <p class="subtle-label">Kanton</p>
+      <div class="dropdown" id="kantonDropdown">
+        <div class="dropdown-toggle" id="kantonToggle">
+          <span id="kantonToggleLabel">Kanton wählen</span>
+          <span class="chev">▾</span>
+        </div>
+        <div class="dropdown-panel" id="kantonPanel">
+          <div class="dropdown-quick">
+            <button type="button" class="tiny secondary" id="btnRegionOnly">Nur Zielregion</button>
+            <button type="button" class="tiny secondary" id="btnAllCantons">Alle Kantone</button>
+          </div>
+          <div id="kantonChecksRegion"></div>
+          <hr class="dropdown-divider">
+          <div id="kantonChecksOther"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-block">
+      <p class="subtle-label">Schwerpunkt</p>
+      <div class="pillgroup" id="schwerpunktPills"></div>
+    </div>
+
+    <div class="filter-block">
+      <p class="subtle-label">Angebotsform</p>
+      <div class="pillgroup" id="angebotPills"></div>
+    </div>
+
+    <div class="filter-block">
+      <p class="subtle-label">Stufe</p>
+      <div class="pillgroup" id="stufePills"></div>
+    </div>
+
+    <div class="filter-block">
+      <p class="subtle-label">IVSE-Status</p>
+      <div class="pillgroup" id="ivsePills"></div>
+    </div>
+
+    <div class="filter-block">
+      <p class="subtle-label">Freitextsuche (Name)</p>
+      <input type="text" id="searchText" placeholder="z. B. Bossard, Albisbrunn …">
+    </div>
+  </section>
+
+  <!-- STEP 3: DISTANCE -->
+  <section class="panel">
+    <h2><span class="num">3</span>Distanz zum Wohnort des Kindes</h2>
+    <p class="hint">Adresse eingeben und berechnen lassen. Berechnet werden die ungefähre <strong>Fahrzeit mit dem Auto</strong> (via OSRM-Routing) und eine <strong>ÖV-Beispielverbindung</strong> (via transport.opendata.ch, Bahnhof–Bahnhof für den nächsten Schultag, 07:30 Uhr — ohne Fussweg zur Haustür, ohne aktuelle Störungen), sowie zur Einordnung die Luftlinie. Die Suche nach "max. Wert" lässt sich auf Fahrzeit Auto, Distanz Auto oder Fahrzeit ÖV einstellen. Alles läuft direkt im Browser über kostenlose öffentliche Dienste. Institutionen ohne hinterlegte Adresse können nicht berücksichtigt werden.</p>
+    <div class="row">
+      <div class="field">
+        <label for="homeAddress">Adresse des Kindes</label>
+        <input type="text" id="homeAddress" placeholder="Strasse Nr., PLZ Ort">
+        <p class="status-line" id="homeAddressLabel" style="margin-top:4px;"></p>
+      </div>
+      <div class="field narrow">
+        <label for="radiusBasis">Suchen nach</label>
+        <select id="radiusBasis">
+          <option value="driveMin">Fahrzeit Auto (Min.)</option>
+          <option value="driveKm">Distanz Auto (km)</option>
+          <option value="ptMin">Fahrzeit ÖV (Min.)</option>
+        </select>
+      </div>
+      <div class="field narrow">
+        <label for="radiusKm">max. Wert (optional)</label>
+        <input type="number" id="radiusKm" placeholder="z. B. 30" min="0">
+      </div>
+      <div class="field narrow" style="flex-grow:0;">
+        <button id="btnCalcDist">Distanz berechnen</button>
+        <button id="btnCancelDist" class="secondary" style="display:none;">Abbrechen</button>
+        <button id="btnClearGeoCache" class="secondary" title="Löscht zwischengespeicherte Adress-Koordinaten, falls ein Ergebnis falsch/veraltet wirkt.">Cache leeren</button>
+      </div>
+    </div>
+    <p class="status-line" id="distStatus"></p>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="panel">
+    <h2><span class="num">4</span>Ergebnisse</h2>
+    <p class="result-count" id="resultCount"></p>
+    <p class="scroll-hint">Tipp: Auf einen Spaltentitel klicken zum Sortieren. Tabelle ist horizontal/vertikal scrollbar, die erste Spalte bleibt beim Scrollen sichtbar.</p>
+    <div class="table-scroll" id="tableWrap"></div>
+    <div class="foot-actions">
+      <button id="btnExportFiltered" class="secondary">Gefilterte Ergebnisse als CSV exportieren</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Datengrundlage: hochgeladene Excel-Übersicht (Verhalten/Kognition/Körper- und Sinnesbehinderungen) sowie IVSE-Datenbank der SODK in der Zielregion. Adressen teils recherchiert oder manuell nachgetragen — bitte bei Bedarf verifizieren. Luftlinie via OpenStreetMap/Nominatim, Fahrzeit via OSRM-Routing (Schätzung ohne aktuelle Verkehrslage).
+</footer>
+
+<script>
+(function(){
+
+  var TARGET_CANTONS = ["SZ","ZH","ZG","LU","NW","OW","UR","GL","SG"];
+  var CANTON_LABELS = {
+    SZ:"Schwyz", ZH:"Zürich", ZG:"Zug", LU:"Luzern", NW:"Nidwalden",
+    OW:"Obwalden", UR:"Uri", GL:"Glarus", SG:"St. Gallen",
+    AG:"Aargau", AR:"Appenzell A.Rh.", AI:"Appenzell I.Rh.", BE:"Bern",
+    BL:"Basel-Landschaft", BS:"Basel-Stadt", FR:"Freiburg", GE:"Genf",
+    GR:"Graubünden", JU:"Jura", NE:"Neuenburg", SH:"Schaffhausen",
+    SO:"Solothurn", TG:"Thurgau", TI:"Tessin", VD:"Waadt", VS:"Wallis",
+    FL:"Liechtenstein"
+  };
+  var SCHWERPUNKTE = ["Verhalten","Kognition","Sprache","Körper- und Sinnesbehinderungen","Nicht klassifiziert"];
+  var ANGEBOT_OPTIONS = ["Tagesschule","Teilinternat","Internat"];
+  var STUFE_OPTIONS = ["KG","PS","Sek I","nachobl."];
+
+  var STARTER_DATA = [{"name": "Bossard Schule", "kanton": "ZG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["KG", "PS"], "bemerkung": "W und M gemischt | Grund- und Primarstufe mit schweren Verhaltensauffälligkeiten und/oder schweren Sprachstörungen", "adresse": "Zugerstrasse 15", "plz": "6314", "ort": "Unterägeri", "source": "excel", "bereich_raw": "A, D", "website": "https://www.bossard-schule.ch", "email": "info@bossard-schule.ch"}, {"name": "Burghof Pestalozzi-Jugendstätte", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "", "adresse": "Burghofstrasse 24", "plz": "8157", "ort": "Dielsdorf", "source": "excel", "bereich_raw": "A, D"}, {"name": "Chinderhuus Traumfänger", "kanton": "SZ", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS"], "bemerkung": "aktuell Zyklus 1 (heute: Schule am Spielweg)", "source": "excel", "adresse": "Spielweg 14", "plz": "8862", "ort": "Schübelbach", "bereich_raw": "A, D"}, {"name": "clix - die schule", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Bahnhofstrasse 28", "plz": "8712", "ort": "Stäfa", "bereich_raw": "A, D", "telefon": "043 477 10 77", "website": "https://www.clix.ch"}, {"name": "Erlenhof Zentrum", "kanton": "BL", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I"], "bemerkung": "", "source": "excel", "adresse": "Erlenhofstrasse 48", "plz": "4153", "ort": "Reinach BL", "bereich_raw": "A, D"}, {"name": "Freie Privatschule Zürich", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Seefeldstrasse 293", "plz": "8008", "ort": "Zürich", "bereich_raw": "A, D", "telefon": "044 211 88 77", "website": "https://www.freie-privatschule.ch"}, {"name": "Freie Schule Bergmeilen", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Toggwilerstrasse 154", "plz": "8706", "ort": "Meilen", "bereich_raw": "A, D", "telefon": "043 477 87 74", "website": "https://www.freie-schule-bergmeilen.ch"}, {"name": "Gruppenschule Thalwil", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "Zielgruppe: Kinder und Jugendliche mit besonderen Strukturbedürfnissen, Sekundarstufe: Zwei freie Schulplätze im Schuljahr 26/27", "adresse": "Seestrasse 155", "plz": "8800", "ort": "Thalwil", "source": "excel", "bereich_raw": "A, D", "website": "http://www.gruppenschule.ch", "email": "info@gruppenschule.ch"}, {"name": "Horbach", "kanton": "ZG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I", "nachobl."], "bemerkung": "max8 pro klasse (altersdurchmischt von 7.-9.Klasse), bezugsperson vorhanden (Bezugspersonensystem),Kantone mit Leistungsvereinbarungen haben Vorrang, viele Pflanzen in der schule selbst, umgeben von Bäumen, grosszügige Gartenanlage; video, dass die Schule zeigt: https://player.vimeo.com/video/768959846?h=4e6a06c9b9&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479", "adresse": "Zugerbergstrasse 22", "plz": "6300", "ort": "Zug", "source": "excel", "bereich_raw": "A, D", "website": "https://www.horbach.ch", "email": "sekretariat@horbach.ch"}, {"name": "Institut Beatenberg", "kanton": "BE", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "", "source": "excel", "adresse": "Waldeggstrasse 195", "plz": "3803", "ort": "Beatenberg", "bereich_raw": "A, D", "telefon": "033 841 81 81", "website": "https://institutbeatenberg.ch"}, {"name": "ISA Privatschule AG", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "ab 5. PS", "source": "excel", "adresse": "Holzwiesstrasse 12", "plz": "8645", "ort": "Rapperswil-Jona", "bereich_raw": "A, D", "telefon": "055 212 28 25", "website": "https://isa.ch"}, {"name": "IWW AG Wetzikon", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Zürcherstrasse 13", "plz": "8620", "ort": "Wetzikon", "bereich_raw": "A, D", "telefon": "044 933 90 90", "website": "https://www.iww.ch"}, {"name": "Jugenddorf Bad Knutwil", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "", "adresse": "Bad Knutwil", "plz": "6213", "ort": "Knutwil", "source": "excel", "bereich_raw": "A, D"}, {"name": "Jugendstätte Bellevue", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "nur Mädchen", "source": "excel", "adresse": "Alte Landstrasse 6b", "plz": "9450", "ort": "Altstätten SG", "bereich_raw": "A, D"}, {"name": "Kinder Dörfli Lütisburg", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "adresse": "Altgonzenbach 35", "plz": "9601", "ort": "Lütisburg Station", "source": "excel", "bereich_raw": "A, D"}, {"name": "Kinderheim St. Benedikt", "kanton": "AG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Klosterstrasse 3", "plz": "5626", "ort": "Hermetschwil-Staffeln", "bereich_raw": "A, D"}, {"name": "Kleingruppenschule Wädenswil", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["PS"], "bemerkung": "", "adresse": "Schönenbergstrasse 3", "plz": "8820", "ort": "Wädenswil", "source": "excel", "bereich_raw": "A, D"}, {"name": "LernRaum AG (Mollis)", "kanton": "GL", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS"], "bemerkung": "", "source": "excel", "adresse": "Haltli", "plz": "8753", "ort": "Mollis", "bereich_raw": "A, D"}, {"name": "LernRaum AG (Ziegelbürcke)", "kanton": "GL", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["Sek I"], "bemerkung": "", "source": "excel", "adresse": "Spinnereistrasse 6", "plz": "8866", "ort": "Ziegelbrücke", "bereich_raw": "A, D"}, {"name": "LernRaum Allegra", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Langrüti", "plz": "8820", "ort": "Wädenswil", "bereich_raw": "A, D"}, {"name": "LMS-Schule AG", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Rotseestrasse 18", "plz": "6006", "ort": "Luzern", "bereich_raw": "A, D", "telefon": "041 361 06 36", "website": "https://www.lms-schule.ch"}, {"name": "Privatschule Hofstatt", "kanton": "SZ", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Grundstrasse 32d", "plz": "6430", "ort": "Schwyz", "source": "excel", "bereich_raw": "A, D"}, {"name": "Privatschule Pegol", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Bahnhofstrasse 10", "plz": "8712", "ort": "Stäfa", "bereich_raw": "A, D", "telefon": "044 926 17 17", "website": "https://www.pegol.ch"}, {"name": "Projektklasse AG", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Eisfeldstrasse 2a", "plz": "6005", "ort": "Luzern", "bereich_raw": "A, D", "telefon": "041 371 04 80", "website": "https://projektklasse.ch"}, {"name": "Schule an der Linth", "kanton": "GL", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["PS", "nachobl."], "bemerkung": "nur bis 9. Schuljar, in der Natur und am FLuss,evtl problem: Eintrittsalter – in der Regel im Alter von 7 bis 12 Jahren, Es werden Kinder aller Religionen und Konfessionen aufgenommen. Sie können aus dem Kanton Glarus oder anderen Deutschschweizer Kantonen stammen.", "adresse": "Koloniegut 1", "plz": "8866", "ort": "Ziegelbrücke GL", "source": "excel", "bereich_raw": "A, D", "website": "http://www.schule-linth.ch", "email": "info@schule-linth.ch"}, {"name": "Schule Friedheim", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "eher ausserhalb der stadt, ländliche Umgebung | eher ausserhalb der stadt, ländliche Umgebung, bis 9.Klasse", "adresse": "Friedheimstr. 14", "plz": "8608", "ort": "Bubikon", "source": "excel", "bereich_raw": "A, D", "website": "http://www.friedheim.ch", "email": "sekretariat@friedheim.ch", "telefon": "055 253 60 20"}, {"name": "Schule im Park", "kanton": "SZ", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["PS"], "bemerkung": "nur Primarschule,", "adresse": "Weidlistrasse 1", "plz": "6422", "ort": "Steinen", "source": "excel", "bereich_raw": "A, D", "website": "https://www.stiftung-raphi.ch/schule-im-park/angebot", "email": "info@shs-steinen.ch"}, {"name": "Schule Zürisee", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Chilerai 5", "plz": "8634", "ort": "Hombrechtikon", "bereich_raw": "A, D", "telefon": "055 264 11 35", "website": "https://www.schule-zuerisee.ch"}, {"name": "Schulheim Elgg", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "ab Mittelstufe", "adresse": "Bahnhofstrasse 35/37, Postfach 274", "plz": "8353", "ort": "Elgg", "source": "excel", "bereich_raw": "A, D"}, {"name": "Schulheim Hochsteig (Lichtensteig)", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "freistehendes Haus in der Natur, nähe eines baches hat anmeldeformular: https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.hochsteig.ch%2Fwp-content%2Fuploads%2F2017%2F10%2FBU_Antragsformular.docx&wdOrigin=BROWSELINK", "adresse": "Hochsteig 1390", "plz": "9620", "ort": "Lichtensteig", "source": "excel", "bereich_raw": "A, D", "website": "http://www.hochsteig.ch", "email": "info@hochsteig.ch"}, {"name": "Schulheim Zizers", "kanton": "GR", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Kantonsstrasse 16", "plz": "7205", "ort": "Zizers", "bereich_raw": "A, D", "telefon": "081 300 01 30", "website": "https://www.schulheim-zizers.ch"}, {"name": "Schulinternat Heimgarten", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "adresse": "Rischbergstrasse 5", "plz": "8180", "ort": "Bülach", "source": "excel", "bereich_raw": "A, D"}, {"name": "Schulinternat in Aathal", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "ab 10 Jahren | 16 Plätze (Tagessonderschule im Heim), 24 Plätze (Schulheime), plätze per email nachfragen", "adresse": "Sackrain 5", "plz": "8607", "ort": "Aathal-Seegräben", "source": "excel", "bereich_raw": "A, D", "website": "http://www.schulinternat-aathal.ch", "email": "info.aathal@zkj.ch"}, {"name": "Schulinternat Redlikon", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "nur bis 2. Oberstufe, ablauf: Telefonische Platzanfrage schriftliche Anmeldung, US-SEK", "adresse": "Oberredlikonerstr. 2", "plz": "8712", "ort": "Stäfa", "source": "excel", "bereich_raw": "A, D", "website": "http://www.schulinternat-redlikon.ch", "email": "info.redlikon@zkj.ch", "telefon": "044 928 22 22"}, {"name": "Schulplus", "kanton": "ZG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["PS"], "bemerkung": "ab 2. PS | Schuleintritt bis zum Übergang/Abschluss der Sekundarstufe I, Bäume rundherum; nähe vom Ägerisee, Wir nehmen Primarschülerinnen und -schüler aus dem Kanton Zug und den angrenzenden Kantonen an – in der Regel zu Beginn eines neuen Schuljahrs, in Ausnahmefällen und bei freien Plätzen auch laufend (evtl problem, da nun in Sekundarstufe)", "adresse": "Mitteldorfstrasse 21", "plz": "6315", "ort": "Oberägeri", "source": "excel", "bereich_raw": "A, D", "website": "https://www.schulplus.ch", "email": "rektorat@schulplus.ch"}, {"name": "Sonnegg", "kanton": "BE", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I"], "bemerkung": "Mädchen 14-17 Jahre", "source": "excel", "adresse": "Sonneggstrasse 28", "plz": "3123", "ort": "Belp", "bereich_raw": "A, D"}, {"name": "Sonnenberg (Verhalten & ASS)", "kanton": "ZG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "maximal acht Schüler*innen, Mischung von Verhaltens-und Sprachbeeinträchtigung, gleich neben Bushaltestation und nähe zum bhf, weniger Natur | maximal acht Schüler*innen, Mischung von Verhaltens-und Sprachbeeinträchtigung, gleich neben Bushaltestation und nähe zum bhf, weniger Natur, Sek", "adresse": "Landhausstrasse 20", "plz": "6340", "ort": "Baar", "source": "excel", "bereich_raw": "A, D", "website": "https://www.sonnenberg-baar.ch", "email": "info@sonnenberg-baar.ch, ansprechsperson Verhalten Sprache: nicolas.felder@sonnenberg-baar.ch"}, {"name": "Stiftung Albisbrunn", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "nähe zur natur , klein Klassen, enge begleitung, Tiergestützte Angebote (Hunde,Alpakas),Sek", "adresse": "Ebertswilerstrasse 33", "plz": "8915", "ort": "Hausen am Albis", "source": "excel", "bereich_raw": "A, D", "website": "https://www.albisbrunn.ch/wp/angebot/schulbildung/", "email": "info@albisbrunn.ch", "telefon": "044 764 81 81"}, {"name": "Stiftung Buechweid", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "Insgesamt 84 = 78 Plätze Sonderschule (SoSchu) / 6 Plätze Therapeutische Wohnschulgruppe, Verhaltensauffälligkeiten und schulischem Förderbedarf, Grün rundherum, im Moment keine freien Plätze | Insgesamt 84 = 78 Plätze Sonderschule (SoSchu) / 6 Plätze Therapeutische Wohnschulgruppe, Verhaltensauffälligkeiten und schulischem Förderbedarf, Grün rundherum, US-S20 jahre  im Moment keine freien Plätze | keine Plätze fürs aktuelle SJ", "adresse": "Buechweid 11", "plz": "8332", "ort": "Russikon", "source": "excel", "bereich_raw": "A, D", "website": "http://www.buechweid.ch", "email": "info@buechweid.ch, leitung@buechweid.ch (für platzanfrage)", "telefon": "044 956 57 57", "freiePlaetze": "keine", "freiePlaetzeDatum": "2026-08-20"}, {"name": "Stiftung Hochsteig (Uznach)", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "ab 4. PS | freihstehendes haus mit viel platz zum spielen und Bäume, hat anmeldeformular: https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fwww.hochsteig.ch%2Fwp-content%2Fuploads%2F2017%2F10%2FBU_Antragsformular.docx&wdOrigin=BROWSELINK", "adresse": "Rickenstrasse 9", "plz": "8730", "ort": "Uznach", "source": "excel", "bereich_raw": "A, D", "website": "https://www.hochsteig.ch/hochsteig-uznach/tagesschulgruppe/", "email": "leitung@hochsteig.ch"}, {"name": "Stiftung Schloss Regensberg", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Oberburg 22", "plz": "8158", "ort": "Regensberg", "source": "excel", "bereich_raw": "A, D"}, {"name": "Stiftung Tagesschule Birke", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["PS", "Sek I"], "bemerkung": "gesamten obligatorischen Schulzeit , Klassengrösse beträgt 8-10 Kinder, nähe von Natur, wald,..-->evtl nicht im Einzugsgebiet | Aufnahme erst ab 2. Klasse möglich", "adresse": "Weisbrod-Areal 5", "plz": "8915", "ort": "Hausen am Albis", "source": "excel", "bereich_raw": "A, D", "website": "http://www.tagesschule-birke.ch", "email": "sekretariat@tagesschule-birke.ch", "freiePlaetze": "keine", "freiePlaetzeDatum": "2026-08-20"}, {"name": "Stiftung Villa Erica", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "Jungen 10-16 Jahre", "source": "excel", "adresse": "Bahnhofstrasse 20", "plz": "6244", "ort": "Nebikon", "bereich_raw": "A, D", "telefon": "062 836 62 00", "website": "https://stiftungvillaerica.ch"}, {"name": "Stiftung YouCount, Internat Berg", "kanton": "BE", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Weissenburg-Berg", "plz": "3764", "ort": "Weissenburg", "bereich_raw": "A, D", "telefon": "033 783 19 74", "website": "https://www.youcount.ch"}, {"name": "Tagesschule Flow", "kanton": "AG", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "source": "excel", "adresse": "Schulhausweg 98", "plz": "5463", "ort": "Wislikofen", "bereich_raw": "A, D"}, {"name": "Therapiehaus Fürstenwald", "kanton": "GR", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "nur Mädchen", "source": "excel", "adresse": "Waisenhausstrasse 1", "plz": "7000", "ort": "Chur", "bereich_raw": "A, D", "telefon": "058 225 19 61", "website": "https://www.pdgr.ch"}, {"name": "Therapieheim Sonnenblick", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I"], "bemerkung": "unterschiedliche Standorte", "adresse": "Sonnhaldenstrasse 3", "plz": "6047", "ort": "Kastanienbaum", "source": "excel", "bereich_raw": "A, D"}, {"name": "Tipiti", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": ["PS", "Sek I"], "bemerkung": "", "adresse": "Winkelriedstrasse 34", "plz": "9000", "ort": "St. Gallen", "source": "excel", "bereich_raw": "A, D"}, {"name": "Viktoria Stiftung", "kanton": "BE", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["Sek I", "nachobl."], "bemerkung": "", "source": "excel", "adresse": "Richigengrabenweg 202", "plz": "3078", "ort": "Richigen", "bereich_raw": "A, D"}, {"name": "Wohnschule Freienstein", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Internat"], "stufe": ["PS"], "bemerkung": "", "adresse": "Rüedistrasse 1", "plz": "8427", "ort": "Freienstein", "source": "excel", "bereich_raw": "A, D"}, {"name": "Zürcherische Pestalozzistiftung", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "viel natur, vor bergpanorama", "adresse": "Langacher 2", "plz": "8934", "ort": "Knonau", "source": "excel", "bereich_raw": "A, D", "website": "http://www.pestalozzistiftung.ch/", "email": "info@pestalozzistiftung.ch"}, {"name": "Zurich International School", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": false, "angebot": ["Tagesschule"], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Steinacherstrasse 140", "plz": "8820", "ort": "Wädenswil", "source": "excel", "bereich_raw": "A, D", "telefon": "043 833 22 22", "website": "https://www.zis.ch"}, {"name": "HZ Glarnerland", "kanton": "GL", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "viel natur, vor bergpanorama", "adresse": "Arenaweg 6", "plz": "8868", "ort": "Oberurnen", "source": "excel", "bereich_raw": "A, D", "website": "http://www.hpzgl.ch", "email": "info@hpzgl.ch"}, {"name": "HZ Hagendorn", "kanton": "ZG", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Lorzenweidstrasse 1", "plz": "6332", "ort": "Hagendorn", "source": "excel", "bereich_raw": "A, D"}, {"name": "Institut St. Michael", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Erholungshausstrasse 32", "plz": "8345", "ort": "Adetswil", "source": "excel", "bereich_raw": "A, D"}, {"name": "Johanneum", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Johanneumstrasse 3, Postfach 93", "plz": "9652", "ort": "Neu St. Johann", "source": "excel", "bereich_raw": "A, D", "website": "https://www.sonderschulheim-johanneum.ch"}, {"name": "Rosenhügel", "kanton": "AR", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "source": "excel", "adresse": "Tüfenbergstrasse 24", "plz": "9107", "ort": "Urnäsch", "bereich_raw": "A, D"}, {"name": "Stiftung Balm", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["KG"], "bemerkung": "", "adresse": "Burgeraustrasse 8", "plz": "8640", "ort": "Rapperswil", "source": "excel", "bereich_raw": "A, D", "website": "https://www.stiftungbalm.ch"}, {"name": "Stiftung Bühl", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": ["Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Rötibodenstrasse 10", "plz": "8820", "ort": "Wädenswil", "source": "excel", "bereich_raw": "A, D"}, {"name": "Landenhof", "kanton": "AG", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["PS", "Sek I"], "bemerkung": "", "adresse": "Landenhofweg 25", "plz": "5035", "ort": "Unterentfelden", "source": "excel", "bereich_raw": "A, D", "website": "https://www.landenhof.ch"}, {"name": "Rodtegg", "kanton": "LU", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Rodteggstrasse 3", "plz": "6005", "ort": "Luzern", "source": "excel", "bereich_raw": "A, D", "website": "https://www.rodtegg.ch"}, {"name": "SEK3", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule"], "stufe": ["Sek I"], "bemerkung": "", "adresse": "Kilchbergstrasse 25", "plz": "8038", "ort": "Zürich", "source": "excel", "bereich_raw": "A, D"}, {"name": "Sonnenberg (Sehen & Sehen Plus)", "kanton": "ZG", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule", "Teilinternat", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "source": "excel", "adresse": "Landhausstrasse 20", "plz": "6340", "ort": "Baar", "bereich_raw": "A, D"}, {"name": "Stiftung Tanne", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Alte Dorfstrasse 3d", "plz": "8135", "ort": "Langnau am Albis", "source": "excel", "bereich_raw": "A, D"}, {"name": "ZGSZ", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": ["Tagesschule", "Internat"], "stufe": ["KG", "PS", "Sek I", "nachobl."], "bemerkung": "", "adresse": "Frohalpstrasse 78", "plz": "8038", "ort": "Zürich", "source": "excel", "bereich_raw": "A, D"}, {"name": "Deduca", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Erbstrasse 26", "plz": "8700", "ort": "Küsnacht ZH", "bereich_raw": "D", "source": "ivse"}, {"name": "Etz Chaim Schule", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Töpferstrasse 18", "plz": "8045", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Evangelisches Sonderschulheim Langhalde", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Langhaldenstrasse 1", "plz": "9030", "ort": "Abtwil SG", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Heilpädagogische Schule", "kanton": "NW", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Buochserstrasse 9c", "plz": "6370", "ort": "Stans", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Affoltern", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Butzenstrasse 2", "plz": "8910", "ort": "Affoltern am Albis", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Bezirk Andelfingen", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Im Morgen 1", "plz": "8457", "ort": "Humlikon", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Bezirk Bülach", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Lufingerstr. 32", "plz": "8185", "ort": "Winkel", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Flawil", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Unterstrasse 29", "plz": "9230", "ort": "Flawil", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Heerbrugg", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Römerstrasse 10", "plz": "9435", "ort": "Heerbrugg", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Limmattal", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Vogelaustrasse 30", "plz": "8953", "ort": "Dietikon", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Luzern", "kanton": "LU", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Bruchstrasse 78", "plz": "6003", "ort": "Luzern", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Rümlang", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Rümelbachstrasse 36", "plz": "8153", "ort": "Rümlang", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Seidenbaum", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Seidenbaum, Postfach 97", "plz": "9477", "ort": "Trübbach", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Heilpädagogische Schule St.Gallen", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Molkenstrasse 1", "plz": "9000", "ort": "St. Gallen", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Sursee", "kanton": "LU", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Kottenmatte 2", "plz": "6210", "ort": "Sursee", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Toggenburg", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Hofjüngerstrasse 6, Postfach 343", "plz": "9630", "ort": "Wattwil", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Turbenthal", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Schulstrasse 7", "plz": "8488", "ort": "Turbenthal", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Uster", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Winikerstrasse 5a", "plz": "8610", "ort": "Uster", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Waidhöchi", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Gehrenstrasse 19", "plz": "8810", "ort": "Horgen", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Wetzikon", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Aemmetweg 14", "plz": "8620", "ort": "Wetzikon ZH", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule Wiggenhof", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Klosterguetstrasse 10", "plz": "9404", "ort": "Rorschacherberg", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Heilpädagogische Schule Willisau", "kanton": "LU", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Schlossfeldstrasse 14", "plz": "6130", "ort": "Willisau", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogische Schule der Stadt Zürich", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Baumackerstrasse 42", "plz": "8050", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Heilpädagogisches Zentrum Hohenrain", "kanton": "LU", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Dorfstrasse 19", "plz": "6276", "ort": "Hohenrain", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Ilgenhalde", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Russikerstr. 64", "plz": "8320", "ort": "Fehraltorf", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Jugendhilfe-Netzwerk Integration AG", "kanton": "LU", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Lehn 22", "plz": "6182", "ort": "Escholzmatt", "bereich_raw": "D", "source": "ivse"}, {"name": "Jüdische Schule NOAM", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Grütlistrasse 68, Postfach", "plz": "8027", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Kleingruppenschule Dielsdorf", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "sehe keine natur rundherum | sehe keine natur rundherum, US-Sek", "adresse": "Rudolf-Maag-Strasse 2", "plz": "8157", "ort": "Dielsdorf", "bereich_raw": "D", "source": "ivse", "website": "http://www.kgs-dielsdorf.ch", "email": "schulleitung@kgs-dielsdorf.ch"}, {"name": "Kleingruppenschule Furttal", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "nur KIGa-Mittelstufe", "adresse": "Althardstrasse 80", "plz": "8105", "ort": "Regensdorf", "bereich_raw": "D", "source": "ivse", "website": "https://www.ps-regensdorf.ch/", "email": "slkgsf@ps-regensdorf.ch"}, {"name": "Kleingruppenschule Kleinandelfingen", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Hinterhofstrasse 8", "plz": "8451", "ort": "Kleinandelfingen", "bereich_raw": "D", "source": "ivse"}, {"name": "Lernpark Seidenbaum", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "private Sonderschule, 24 K/J, In Ausnahmefällen werden auch Kinder und Jugendliche aus angrenzenden Gebieten aufgenommen, neben einem Fluss in der nähe von Natur, bis zu 20Jahren", "adresse": "Flumserbergstrasse 24", "plz": "8896", "ort": "Flumserberg Bergheim", "bereich_raw": "D", "source": "ivse", "website": "https://www.hpzseidenbaum.ch/", "email": "leitung@hpzseidenbaum.ch"}, {"name": "Lernwerkstatt Bickwil", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "niveau- und jahrgangsgemischt, nähe zum wald vorhanden, Ab November 2026 können Sie sich bei der Schulleitung zu den neuen Schulplätzen 2027/28 erkundigen, (nicht in der Versorgerregion, aber evtl zweitrangig dann gewählt) | niveau- und jahrgangsgemischt, nähe zum wald vorhanden, Ab November 2026 können Sie sich bei der Schulleitung zu den neuen Schulplätzen 2027/28 erkundigen, (nicht in der Versorgerregion, aber evtl zweitrangig dann gewählt), US-Sek", "adresse": "Ottenbacherstr. 94", "plz": "8912", "ort": "Obfelden", "bereich_raw": "D", "source": "ivse", "website": "http://www.stiftunglwb.ch", "email": "schulverwaltung@stiftunglwb.ch"}, {"name": "Mariazell Sursee", "kanton": "LU", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Sempacherstrasse 2", "plz": "6210", "ort": "Sursee", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Mathilde Escher Stiftung (Minderjährige)", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Lengghalde 1", "plz": "8008", "ort": "Zürich", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Michaelschule, Städtische Heilpädagogische Schule Winterthur", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Florenstrasse 11", "plz": "8405", "ort": "Winterthur", "bereich_raw": "D", "source": "ivse"}, {"name": "Oberstufenschule Lengg", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "viel wiesen und Bäume rund um das Schulgebäude, agessonderschule Typ A (Lern- und Verhaltensschwierigkeiten) die passende Beschulung erhält. Teilleistungsschwächen, AD(H)S oder gesundheitliche Einschränkungen sind häufig ein Zuweisungsgrund, nur bis meilen einzugs Gebiet", "adresse": "Bleulerstrasse 60", "plz": "8008", "ort": "Zürich", "bereich_raw": "D", "source": "ivse", "website": "https://www.swissepi.ch/ossl.html", "email": "priska.vonarx@swissepi.ch"}, {"name": "Prima Sonderschulung", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "10 Jugendliche (zw 10-18 jahren),  Tagessonderschule für Lern- und Verhaltensbehinderungen | 10 Jugendliche (zw 12-18 jahren),  Tagessonderschule für Lern- und Verhaltensbehinderungen | 10 Jugendliche (zw 10-18 jahren),  Tagessonderschule für Lern- und Verhaltensbehinderungen, MS-Sek", "adresse": "Albulastrasse 60", "plz": "8048", "ort": "Zürich", "bereich_raw": "D", "source": "ivse", "website": "http://www.prima-sonderschulung.ch", "email": "info@prima-sonderschulung.ch"}, {"name": "Pädagogisches Zentrum Pestalozzihaus", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Alte St. Gallerstrasse 1", "plz": "8352", "ort": "Elsau", "bereich_raw": "A, D", "source": "ivse"}, {"name": "RGZ-Stiftung, Heilpädagogische Schule Zürich", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Winterthurerstr. 563", "plz": "8051", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Rafaelschule, Heilpädagogische Tagesschule", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Kapfsteig 64", "plz": "8032", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Schule Fokus Sehen (SFS)", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Eugen-Huber-Strasse 6", "plz": "8048", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Schule für Kinder und Jugendliche mit Körper- und Mehrfachbehinderungen (SKB)", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Mutschellenstrasse 102", "plz": "8038", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Schule im Grund", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Usterstrasse 139", "plz": "8620", "ort": "Wetzikon ZH", "bereich_raw": "D", "source": "ivse"}, {"name": "Schule in Kleingruppen Wallisellen", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "altersdurchmischten Kleinklassen , keine Natur in der Stadt", "adresse": "Bahnhofstrasse 7", "plz": "8304", "ort": "Wallisellen", "bereich_raw": "D", "source": "ivse", "website": "http://www.schule.wallisellen.ch/schulen/schule-in-kleingruppen-kgs/", "email": "daniel.sigrist@schule.wallisellen.ch"}, {"name": "Schule momo", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "nur bezirk uster/umliegende Bezirke", "adresse": "Seestrasse 110", "plz": "8610", "ort": "Uster", "bereich_raw": "D", "source": "ivse", "website": "http://www.schulemomo.ch", "email": "info@schulemomo.ch"}, {"name": "Schulinternat Ringlikon", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "8 Plätze (Tagessonderschule mit sozialpädagogischer Ganztagesbetreuung (\"Tagessonderschule Plus\"), 28 Plätze (Schulheime, davon 4 Plätze Tageswohnen), Kindern und Jugendlichen von 10 bis 16 Jahren, alle plätze belegt, schneit so als ob nur bis zur 6. Klasse", "adresse": "Uetlibergstrasse 45", "plz": "8142", "ort": "Uitikon Waldegg", "bereich_raw": "A, D", "source": "ivse", "website": "http://www.ringlikon.ch", "email": "info.ringlikon@zkj.ch"}, {"name": "Sekundarschule am Rigiplatz", "kanton": "ZH", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "Die Sekundarschule am Rigiplatz hat Platz für maximal 24 Schülerinnen und Schüler in 3 Kleinklassen. Die Klassengrösse schwankt zwischen 6 und 8 SchülerInnen, verteilt auf drei Klassenlehrpersonen.  Für das aktuelle Schulajher 2025/26 gibt es keine freien Schulplätze.  Für das Schuljahr 2026/27 gibt es keine freien Schulplätze.", "adresse": "Ottikerstrasse 36", "plz": "8006", "ort": "Zürich", "bereich_raw": "D", "source": "ivse", "website": "https://sekundarschuleamrigiplatz.com", "email": "schulleitung@sekundarschuleamrigiplatz.com"}, {"name": "Solitär ASS-Tagesschule", "kanton": "NW", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Dorf 5", "plz": "6363", "ort": "Obbürgen", "bereich_raw": "D", "source": "ivse"}, {"name": "Sonderpäd. Tagesschule für Wahrnehmungsförderung STW", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Ottenbacherstrasse 17", "plz": "8909", "ort": "Zwillikon", "bereich_raw": "D", "source": "ivse"}, {"name": "Sonderschule Heim Oberfeld", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Oberfeldstrasse 20", "plz": "9437", "ort": "Marbach SG", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Sonderschule Stiftung Kronbühl", "kanton": "SG", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Ringstrasse 13, Postfach 461", "plz": "9300", "ort": "Wittenbach", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Sonderschulheim Kinder Dörfli", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "grosses Schulhaus in der natur mit viel platz zum spielen/Bewegen, wenige plätze in der Oberstufe verfpgbar, Verhaltensauffälligkeiten und Lernschwierigkeiten", "adresse": "Altgonzenbach", "plz": "9601", "ort": "Lütisburg Station", "bereich_raw": "A, D", "source": "ivse", "website": "http://www.kinderdoerfli.ch", "email": "info@kinderdoerfli.ch"}, {"name": "Sonderschulinternat Hemberg", "kanton": "SG", "schwerpunkt": "Verhalten", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "Schule in totaler Natur, 1. bis zur 9. Klasse, 3 Tagessonderschulplätze, pferdegestützte Intervetionen, altersdurchmischten Klassen von acht Schülerinnen und Schülern, Freizeit auf dem Bauernhof, 26/27 alle Schulplätzte ausgebucht", "adresse": "Rütelistrasse 10", "plz": "9633", "ort": "Hemberg", "bereich_raw": "A, D", "source": "ivse", "website": "http://www.sonderschulinternat.ch", "email": "info@sonderschulinternat.ch; d.lehmann@sonderschulinternat.ch (Platzanfrager)"}, {"name": "Sprachheilschule St.Gallen", "kanton": "SG", "schwerpunkt": "Sprache", "ivse": true, "angebot": [], "stufe": ["KG", "PS"], "bemerkung": "", "adresse": "Höhenweg 64", "plz": "9000", "ort": "St. Gallen", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Sprachheilschule Toggenburg", "kanton": "SG", "schwerpunkt": "Sprache", "ivse": true, "angebot": [], "stufe": ["KG", "PS"], "bemerkung": "", "adresse": "Wilerstrasse 15, Postfach", "plz": "9630", "ort": "Wattwil", "bereich_raw": "D", "source": "ivse"}, {"name": "Sprachheilschule Zürich", "kanton": "ZH", "schwerpunkt": "Sprache", "ivse": true, "angebot": [], "stufe": ["KG", "PS"], "bemerkung": "", "adresse": "Ursprungstrasse 10", "plz": "8044", "ort": "Gockhausen", "bereich_raw": "D", "source": "ivse"}, {"name": "Stiftung Kind & Autismus", "kanton": "ZH", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Bergstrasse 28", "plz": "8902", "ort": "Urdorf", "bereich_raw": "D", "source": "ivse"}, {"name": "Stiftung Raphi Sprachheilschule Steinen", "kanton": "SZ", "schwerpunkt": "Sprache", "ivse": true, "angebot": [], "stufe": ["PS"], "bemerkung": "", "adresse": "Weidlistrasse 1", "plz": "6422", "ort": "Steinen", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Stiftung Rütimattli, Heilpädagogische Früherziehung", "kanton": "OW", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Marktstrasse 5a", "plz": "6060", "ort": "Sarnen", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Stiftung Rütimattli, Heilpädagogische Schule und Schulwohngruppe", "kanton": "OW", "schwerpunkt": "Kognition", "ivse": true, "angebot": [], "stufe": ["KG", "PS", "Sek I"], "bemerkung": "", "adresse": "Rütimattli 4", "plz": "6072", "ort": "Sachseln", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Stiftung Schule Tägerst", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "Us-Sek, Regelung der IVSE gelten für die Platzierung, viel natur rundherum", "adresse": "Lagerstrasse 11", "plz": "8910", "ort": "Affoltern am Albis", "bereich_raw": "D", "source": "ivse", "website": "http://www.taegerst.ch", "email": "sekretariat@taegerst.ch; Anfrage Schulplatz: schulplatz@taegerst.ch"}, {"name": "Stiftung Tagesschule Oberglatt", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Alpenstrasse 18", "plz": "8154", "ort": "Oberglatt ZH", "bereich_raw": "D", "source": "ivse"}, {"name": "Stiftung Vivendra", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Spitalstrasse 12, Postfach 113", "plz": "8157", "ort": "Dielsdorf", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Stiftung m.a.c. - Sonderpädagogische Schule", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "erster Priorität Kinder und Jugendliche der Stadt Zürich auf (2. prio andere Gemienden) steht nicht von anderen Kantonen", "adresse": "Ottikerstrasse 5", "plz": "8006", "ort": "Zürich", "bereich_raw": "D", "source": "ivse", "website": "http://www.stiftungmac.ch", "email": "info@stiftungmac.ch"}, {"name": "Städt. Schule für cerebral gelähmte Kinder, Maurerschule", "kanton": "ZH", "schwerpunkt": "Körper- und Sinnesbehinderungen", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Unterer Deutweg 83", "plz": "8400", "ort": "Winterthur", "bereich_raw": "D", "source": "ivse"}, {"name": "Tagesschule Eschenmosen/Räterschen/Höri", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Alte St. Gallerstrasse 1, Postfach 60", "plz": "8352", "ort": "Elsau", "bereich_raw": "D", "source": "ivse"}, {"name": "Tagesschule Fähre", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "Der Aufnahmeprozess für das SJ 26/27 läuft noch, hat bäume rundherum aber eher in der stadt, jedoch super nähe zum bahnhof (höchsten 5min fussweg), US-Sek", "adresse": "Bahnhofstrasse 10", "plz": "8706", "ort": "Meilen", "bereich_raw": "D", "source": "ivse", "website": "https://www.tagesschule-faehre.ch/web/index.php", "email": "info@tagesschule-faehre.ch"}, {"name": "Tagesschule visoparents", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Stettbachstrasse 10", "plz": "8600", "ort": "Dübendorf", "bereich_raw": "D", "source": "ivse"}, {"name": "Viventa15plus / Fachschule Viventa", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Wipkingerplatz 4", "plz": "8037", "ort": "Zürich", "bereich_raw": "D", "source": "ivse"}, {"name": "Werkschule Grundhof", "kanton": "ZH", "schwerpunkt": "", "ivse": true, "angebot": [], "stufe": [], "bemerkung": "", "adresse": "Grundhofstrasse 74", "plz": "8404", "ort": "Stadel (Winterthur)", "bereich_raw": "A, D", "source": "ivse"}, {"name": "Zürcher Sprachheilschule", "kanton": "ZG", "schwerpunkt": "Sprache", "ivse": true, "angebot": [], "stufe": ["KG", "PS"], "bemerkung": "", "adresse": "Höhenweg 80", "plz": "6314", "ort": "Unterägeri", "bereich_raw": "A, D", "source": "ivse"}]
+
+
+
+
+
+
+
+
+
+;
+
+  var GEOCODE_CACHE_KEY = "sonderschulen_geocode_cache_v4";
+
+  // ---------- GIST-ANBINDUNG (gemeinsame Datenquelle) ----------
+  // Lesen: immer, für alle, ohne Login — laeuft ueber die oeffentliche "raw"-URL des Gists.
+  // Schreiben: optional, nur wenn ein GitHub-Token hinterlegt ist (siehe "Daten verwalten").
+  var GIST_ID = "cc00f641aafaf66690c47734ea267a15";
+  var GIST_OWNER = "GAEgeler";
+  var GIST_FILENAME = "gistfile1.txt";
+  var GIST_RAW_URL = "https://gist.githubusercontent.com/" + GIST_OWNER + "/" + GIST_ID + "/raw/" + GIST_FILENAME;
+  var GIST_API_URL = "https://api.github.com/gists/" + GIST_ID;
+  var GITHUB_TOKEN_KEY = "sonderschulen_github_token";
+
+  var schools = [];
+  var activeKantone = {};
+  var activeSchwerpunkt = {};
+  var activeAngebot = {};
+  var activeStufe = {};
+  var ivseFilter = "alle";
+
+  Object.keys(CANTON_LABELS).forEach(function(k){ activeKantone[k] = TARGET_CANTONS.indexOf(k) !== -1; });
+  // Bewusst deaktiviert (nicht vorausgewählt): erst wenn aktiv angeklickt, wird gefiltert.
+  SCHWERPUNKTE.forEach(function(s){ activeSchwerpunkt[s] = false; });
+  ANGEBOT_OPTIONS.forEach(function(a){ activeAngebot[a] = false; });
+  STUFE_OPTIONS.forEach(function(s){ activeStufe[s] = false; });
+
+  var homeCoords = null;
+  var homeCoordsLabel = "";
+  var idCounter = 0;
+
+  function loadCache(){
+    try{ return JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || "{}"); }
+    catch(e){ return {}; }
+  }
+  function saveCache(c){ try{ localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(c)); }catch(e){} }
+  var geoCache = loadCache();
+
+  function normAddr(s){ return (s||"").trim().toLowerCase().replace(/\s+/g," "); }
+
+  function haversine(lat1, lon1, lat2, lon2){
+    var R = 6371;
+    var dLat = (lat2-lat1) * Math.PI/180;
+    var dLon = (lon2-lon1) * Math.PI/180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180) *
+            Math.sin(dLon/2)*Math.sin(dLon/2);
+    var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R*c;
+  }
+  function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+
+  // Returns {ok:true, coords} on success, or {ok:false, reason, detail} on failure.
+  // reason: "empty" | "network" | "http" | "notfound"
+  async function geocode(addressStr){
+    var key = normAddr(addressStr);
+    if(!key) return {ok:false, reason:"empty"};
+    if(geoCache[key]) return {ok:true, coords: geoCache[key], label: geoCache[key].label || ""};
+    var url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ch,li&q=" + encodeURIComponent(addressStr);
+    var res;
+    try{
+      res = await fetch(url, { headers: { "Accept":"application/json" } });
+    }catch(e){
+      return {ok:false, reason:"network", detail: e.message};
+    }
+    if(!res.ok){
+      return {ok:false, reason:"http", detail: res.status};
+    }
+    var data;
+    try{
+      data = await res.json();
+    }catch(e){
+      return {ok:false, reason:"network", detail: "Antwort konnte nicht gelesen werden"};
+    }
+    if(data && data.length){
+      var coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), label: data[0].display_name || "" };
+      geoCache[key] = coords;
+      saveCache(geoCache);
+      return {ok:true, coords: coords, label: coords.label};
+    }
+    return {ok:false, reason:"notfound"};
+  }
+
+  function geocodeErrorMessage(result){
+    if(result.reason === "network"){
+      return "Verbindung zum Geokodierungs-Dienst fehlgeschlagen (" + (result.detail || "Netzwerkfehler") + "). " +
+        "Falls diese Seite als lokale Datei geöffnet ist (Adresse beginnt mit „file://“), blockieren manche Browser " +
+        "— vor allem Safari — Anfragen an externe Server von lokalen Dateien aus. Bitte in Chrome oder Firefox öffnen, " +
+        "oder die Datei über einen internen Webserver / SharePoint / Intranet aufrufen statt per Doppelklick.";
+    }
+    if(result.reason === "http"){
+      return "Der Geokodierungs-Dienst antwortete mit Fehler " + result.detail + ". Bitte kurz warten und erneut versuchen (Nominatim erlaubt max. 1 Anfrage/Sekunde).";
+    }
+    if(result.reason === "notfound"){
+      return "Adresse konnte nicht gefunden werden. Bitte Schreibweise prüfen (z. B. „Bahnhofstrasse 1, 6430 Schwyz“).";
+    }
+    return "Adresse konnte nicht verarbeitet werden.";
+  }
+
+  function detectDelimiter(line){
+    if(line.indexOf("\t") !== -1) return "\t";
+    if(line.indexOf(";") !== -1) return ";";
+    return ",";
+  }
+  function splitList(s){ return (s||"").split(",").map(function(x){return x.trim();}).filter(Boolean); }
+
+  function parseCsv(text){
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim().length; });
+    if(!lines.length) return [];
+    var delim = detectDelimiter(lines[0]);
+    var header = lines[0].split(delim).map(function(h){ return h.trim().toLowerCase(); });
+    var idx = {
+      name: header.indexOf("name"),
+      kanton: header.findIndex(function(h){ return h.indexOf("kanton") !== -1; }),
+      schwerpunkt: header.findIndex(function(h){ return h.indexOf("schwerpunkt") !== -1; }),
+      ivse: header.indexOf("ivse"),
+      angebot: header.findIndex(function(h){ return h.indexOf("angebot") !== -1; }),
+      stufe: header.findIndex(function(h){ return h.indexOf("stufe") !== -1; }),
+      bemerkung: header.findIndex(function(h){ return h.indexOf("bemerkung") !== -1; }),
+      adresse: header.findIndex(function(h){ return h.indexOf("adress") !== -1; }),
+      plz: header.findIndex(function(h){ return h.indexOf("plz") !== -1; }),
+      ort: header.findIndex(function(h){ return h.indexOf("ort") !== -1; }),
+      bereich: header.findIndex(function(h){ return h.indexOf("bereich") !== -1; }),
+      telefon: header.findIndex(function(h){ return h.indexOf("telefon") !== -1 || h.indexOf("tel") === 0; }),
+      website: header.findIndex(function(h){ return h.indexOf("website") !== -1 || h.indexOf("web") !== -1; }),
+      email: header.findIndex(function(h){ return h.indexOf("email") !== -1 || h.indexOf("mail") !== -1; }),
+      freiePlaetze: header.findIndex(function(h){ return h.indexOf("freieplaetze") !== -1 && h.indexOf("datum") === -1; }),
+      freiePlaetzeDatum: header.findIndex(function(h){ return h.indexOf("freieplaetze") !== -1 && h.indexOf("datum") !== -1; }),
+      lat: header.findIndex(function(h){ return h==="lat"; }),
+      lon: header.findIndex(function(h){ return h==="lon" || h==="lng"; })
+    };
+    var hasHeader = idx.name !== -1;
+    var startRow = hasHeader ? 1 : 0;
+    var out = [];
+    for(var i=startRow; i<lines.length; i++){
+      var cols = lines[i].split(delim).map(function(c){ return c.trim(); });
+      if(!cols.length || cols.every(function(c){return c==="";})) continue;
+      var g = function(k){ return idx[k]>=0 ? (cols[idx[k]]||"") : ""; };
+      var row = {
+        name: g("name"),
+        kanton: g("kanton").toUpperCase(),
+        schwerpunkt: g("schwerpunkt") || "Nicht klassifiziert",
+        ivse: /^(x|ja|true|1)$/i.test(g("ivse")),
+        angebot: splitList(g("angebot")),
+        stufe: splitList(g("stufe")),
+        bemerkung: g("bemerkung"),
+        adresse: g("adresse"),
+        plz: g("plz"),
+        ort: g("ort"),
+        bereich_raw: g("bereich"),
+        telefon: g("telefon"),
+        website: g("website"),
+        email: g("email"),
+        freiePlaetze: g("freiePlaetze") || "unbekannt",
+        freiePlaetzeDatum: g("freiePlaetzeDatum"),
+        lat: idx.lat>=0 && cols[idx.lat] ? parseFloat(cols[idx.lat].replace(",",".")) : null,
+        lon: idx.lon>=0 && cols[idx.lon] ? parseFloat(cols[idx.lon].replace(",",".")) : null
+      };
+      if(row.name) out.push(row);
+    }
+    return out;
+  }
+
+  function toCsv(rows){
+    var header = ["Name","Kanton","Schwerpunkt","IVSE","Angebot","Stufe","Bemerkung","Adresse","PLZ","Ort","Telefon","Website","Email","FreiePlaetze","FreiePlaetze_Datum","Luftlinie_km","Fahrzeit_Auto_Min","OeV_Min","OeV_Umstiege"];
+    var lines = [header.join(";")];
+    rows.forEach(function(r){
+      var dist = (r._dist!=null && isFinite(r._dist)) ? r._dist.toFixed(1) : "";
+      var drive = (r._driveMin!=null) ? Math.round(r._driveMin) : "";
+      var pt = (r._ptMin!=null && r._ptMin >= 0) ? Math.round(r._ptMin) : "";
+      var ptT = (r._ptTransfers!=null) ? r._ptTransfers : "";
+      lines.push([
+        r.name, r.kanton, r.schwerpunkt||"", (r.ivse?"x":""),
+        (r.angebot||[]).join(", "), (r.stufe||[]).join(", "),
+        r.bemerkung||"", r.adresse||"", r.plz||"", r.ort||"",
+        r.telefon||"", r.website||"", r.email||"",
+        r.freiePlaetze||"unbekannt", r.freiePlaetzeDatum||"",
+        dist, drive, pt, ptT
+      ].join(";"));
+    });
+    return lines.join("\n");
+  }
+
+  function download(filename, text){
+    var blob = new Blob([text], {type:"text/csv;charset=utf-8;"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- PILL FILTER BUILDER ----------
+  function buildPillGroup(containerId, options, stateObj, accentRed){
+    var wrap = document.getElementById(containerId);
+    wrap.innerHTML = "";
+    options.forEach(function(opt){
+      var pill = document.createElement("div");
+      pill.className = "pill" + (stateObj[opt] ? " active" : "") + (accentRed ? " accent-red" : "");
+      pill.textContent = opt;
+      pill.addEventListener("click", function(){
+        stateObj[opt] = !stateObj[opt];
+        pill.classList.toggle("active", stateObj[opt]);
+        render();
+      });
+      wrap.appendChild(pill);
+    });
+  }
+
+  function buildIvsePills(){
+    var wrap = document.getElementById("ivsePills");
+    wrap.innerHTML = "";
+    [["alle","Alle"],["ja","IVSE-anerkannt"],["nein","Nicht IVSE-anerkannt"]].forEach(function(pair){
+      var pill = document.createElement("div");
+      pill.className = "pill" + (ivseFilter===pair[0] ? " active" : "");
+      pill.textContent = pair[1];
+      pill.addEventListener("click", function(){
+        ivseFilter = pair[0];
+        buildIvsePills();
+        render();
+      });
+      wrap.appendChild(pill);
+    });
+  }
+
+  // ---------- KANTON DROPDOWN ----------
+  function updateKantonToggleLabel(){
+    var selected = Object.keys(activeKantone).filter(function(k){ return activeKantone[k]; });
+    var label;
+    if(selected.length === Object.keys(CANTON_LABELS).length){
+      label = "Alle Kantone";
+    } else if(selected.length === 0){
+      label = "Kein Kanton gewählt";
+    } else if(selected.length <= 3){
+      label = selected.join(", ");
+    } else {
+      label = selected.length + " Kantone ausgewählt";
+    }
+    document.getElementById("kantonToggleLabel").textContent = label;
+  }
+
+  function buildKantonDropdown(){
+    var regionWrap = document.getElementById("kantonChecksRegion");
+    var otherWrap = document.getElementById("kantonChecksOther");
+    regionWrap.innerHTML = "";
+    otherWrap.innerHTML = "";
+
+    function makeCheck(code, isRegion){
+      var lbl = document.createElement("label");
+      lbl.className = "dropdown-check" + (isRegion ? " region" : "");
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!activeKantone[code];
+      cb.addEventListener("change", function(){
+        activeKantone[code] = cb.checked;
+        updateKantonToggleLabel();
+        render();
+      });
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(" " + code + " — " + CANTON_LABELS[code]));
+      return lbl;
+    }
+
+    TARGET_CANTONS.forEach(function(code){ regionWrap.appendChild(makeCheck(code, true)); });
+    var others = Object.keys(CANTON_LABELS).filter(function(c){ return TARGET_CANTONS.indexOf(c)===-1; });
+    others.sort(function(a,b){ return CANTON_LABELS[a].localeCompare(CANTON_LABELS[b]); });
+    others.forEach(function(code){ otherWrap.appendChild(makeCheck(code, false)); });
+
+    updateKantonToggleLabel();
+  }
+
+  document.getElementById("adminToggleLink").addEventListener("click", function(e){
+    e.preventDefault();
+    var panel = document.getElementById("dataAdminPanel");
+    var isHidden = panel.style.display === "none";
+    panel.style.display = isHidden ? "block" : "none";
+    this.textContent = isHidden ? "Daten verwalten ausblenden" : "Daten verwalten";
+  });
+
+  document.getElementById("kantonToggle").addEventListener("click", function(e){
+    document.getElementById("kantonDropdown").classList.toggle("open");
+    e.stopPropagation();
+  });
+  document.addEventListener("click", function(e){
+    var dd = document.getElementById("kantonDropdown");
+    if(dd.classList.contains("open") && !dd.contains(e.target)){
+      dd.classList.remove("open");
+    }
+  });
+  document.getElementById("btnRegionOnly").addEventListener("click", function(){
+    Object.keys(CANTON_LABELS).forEach(function(k){ activeKantone[k] = TARGET_CANTONS.indexOf(k) !== -1; });
+    buildKantonDropdown();
+    render();
+  });
+  document.getElementById("btnAllCantons").addEventListener("click", function(){
+    Object.keys(CANTON_LABELS).forEach(function(k){ activeKantone[k] = true; });
+    buildKantonDropdown();
+    render();
+  });
+
+  // ---------- FILTER + RENDER ----------
+  function anyActive(obj){
+    return Object.keys(obj).some(function(k){ return obj[k]; });
+  }
+
+  function matchesFilters(row){
+    var kantonOk = activeKantone[row.kanton] === true;
+
+    // Schwerpunkt/Angebot/Stufe sind bewusst standardmässig nicht vorausgewählt:
+    // solange in einer Gruppe nichts angeklickt ist, schränkt diese Gruppe nicht ein.
+    // Sobald mind. eine Option angeklickt ist, wird auf genau diese eingegrenzt.
+    var sp = row.schwerpunkt || "Nicht klassifiziert";
+    var schwerpunktOk = !anyActive(activeSchwerpunkt) ? true : activeSchwerpunkt[sp] === true;
+
+    var angebotOk = !anyActive(activeAngebot) ? true :
+      ((row.angebot||[]).length===0 ? false : (row.angebot||[]).some(function(a){ return activeAngebot[a]; }));
+
+    var stufeOk = !anyActive(activeStufe) ? true :
+      ((row.stufe||[]).length===0 ? false : (row.stufe||[]).some(function(s){ return activeStufe[s]; }));
+
+    var ivseOk = ivseFilter==="alle" ? true : (ivseFilter==="ja" ? row.ivse : !row.ivse);
+    var txt = document.getElementById("searchText").value.trim().toLowerCase();
+    var textOk = !txt || (row.name||"").toLowerCase().indexOf(txt)!==-1;
+    return kantonOk && schwerpunktOk && angebotOk && stufeOk && ivseOk && textOk;
+  }
+
+  var sortState = { key: null, dir: 1 };
+
+  function sortValue(r, key){
+    switch(key){
+      case "name": return (r.name||"").toLowerCase();
+      case "kanton": return (r.kanton||"").toLowerCase();
+      case "dist": return (r._dist==null) ? Infinity : r._dist;
+      case "drive": return (r._driveMin==null) ? Infinity : r._driveMin;
+      case "pt": return (r._ptMin==null || r._ptMin < 0) ? Infinity : r._ptMin;
+      default: return "";
+    }
+  }
+
+  function setSort(key){
+    if(sortState.key === key){
+      sortState.dir = -sortState.dir;
+    } else {
+      sortState.key = key;
+      sortState.dir = 1;
+    }
+    render();
+  }
+  window._setSort = setSort; // referenced from inline onclick in the generated table header
+
+  // Basis für den "max. Wert"-Suchfilter. Aktuell deaktiviert: Luftlinie (dist) —
+  // Zeile einkommentieren, um sie in der Auswahl wieder verfügbar zu machen.
+  var RADIUS_BASIS = {
+    driveMin: { field: "_driveMin", label: "Min. (Auto)" },
+    driveKm:  { field: "_driveKm",  label: "km (Auto)" },
+    ptMin:    { field: "_ptMin",    label: "Min. (ÖV)" }
+    // dist:  { field: "_dist",     label: "km (Luftlinie)" }
+  };
+
+  function render(){
+    document.getElementById("dataCount").textContent = schools.length;
+    var filtered = schools.filter(matchesFilters);
+
+    var radiusVal = parseFloat(document.getElementById("radiusKm").value);
+    var basisKey = document.getElementById("radiusBasis").value;
+    var basis = RADIUS_BASIS[basisKey] || RADIUS_BASIS.driveMin;
+    var hasRadius = homeCoords && !isNaN(radiusVal) && radiusVal > 0;
+
+    filtered.forEach(function(r){
+      if(homeCoords && r.lat!=null && r.lon!=null){
+        r._dist = haversine(homeCoords.lat, homeCoords.lon, r.lat, r.lon);
+      } else {
+        r._dist = null;
+      }
+    });
+
+    if(hasRadius){
+      filtered = filtered.filter(function(r){
+        var v = r[basis.field];
+        return v!=null && v >= 0 && v <= radiusVal;
+      });
+    }
+
+    if(sortState.key){
+      filtered.sort(function(a,b){
+        var va = sortValue(a, sortState.key), vb = sortValue(b, sortState.key);
+        if(typeof va === "string") return va.localeCompare(vb) * sortState.dir;
+        return (va - vb) * sortState.dir;
+      });
+    } else if(homeCoords){
+      filtered.sort(function(a,b){
+        var da = (a._dist==null) ? Infinity : a._dist;
+        var db = (b._dist==null) ? Infinity : b._dist;
+        return da - db;
+      });
+    } else {
+      filtered.sort(function(a,b){ return (a.name||"").localeCompare(b.name||""); });
+    }
+
+    document.getElementById("resultCount").textContent =
+      filtered.length + " von " + schools.length + " Institutionen entsprechen den Filtern" +
+      (hasRadius ? " (max. " + radiusVal + " " + basis.label + ")" : "");
+
+    var wrap = document.getElementById("tableWrap");
+    if(!filtered.length){
+      wrap.innerHTML = '<div class="empty-state">Keine Institutionen gefunden. Filter anpassen oder Datensatz ergänzen.</div>';
+      return;
+    }
+
+    function th(label, key){
+      var arrow = "";
+      if(key && sortState.key === key){
+        arrow = '<span class="sort-arrow">'+(sortState.dir===1 ? "▲" : "▼")+'</span>';
+      }
+      var cls = key ? ' class="sortable" onclick="_setSort(\''+key+'\')"' : '';
+      return '<th'+cls+'>'+label+arrow+'</th>';
+    }
+
+    var html = '<table><thead><tr>' +
+      th('Institution','name') + '<th>Freie Plätze</th>' + th('Kanton','kanton') + '<th>Schwerpunkt</th><th>Angebot</th><th>Stufe</th><th>IVSE</th><th>Kontakt</th><th>Adresse</th><th>Bemerkung</th>' +
+      (homeCoords ? th('Luftlinie','dist') + th('Fahrzeit (Auto)','drive') + th('ÖV (Bahnhof–Bahnhof)','pt') : '') +
+      '</tr></thead><tbody>';
+
+    filtered.forEach(function(r){
+      var sp = r.schwerpunkt || "Nicht klassifiziert";
+      var spClass = sp.indexOf("Körper")===0 ? "sp-Koerper" : (sp==="Nicht klassifiziert" ? "sp-none" : "sp-"+sp);
+      var spBadge = '<span class="badge '+spClass+'">'+escapeHtml(sp)+'</span>';
+
+      var angBadges = (r.angebot||[]).map(function(a){ return '<span class="badge angebot">'+escapeHtml(a)+'</span>'; }).join("");
+      var stufeBadges = (r.stufe||[]).map(function(s){ return '<span class="badge stufe">'+escapeHtml(s)+'</span>'; }).join("");
+      var ivseCell = r.ivse ? '<span class="ivse-yes">✓ IVSE</span>' : '<span class="ivse-no">–</span>';
+
+      var addrVal = [r.adresse, r.plz, r.ort].filter(Boolean).join(", ");
+      var rowId = r._id;
+      var addrTitle = r._geoLabel ? ' title="Aufgelöst als: '+escapeHtml(r._geoLabel)+'"' : '';
+      var addrCell = '<input type="text" data-id="'+rowId+'" class="addrInput" placeholder="Strasse Nr., PLZ Ort" value="'+escapeHtml(addrVal)+'"'+addrTitle+'>';
+
+      // Kontakt: Telefon bevorzugt, sonst Website-Link, sonst Google-Suche als Fallback
+      var kontaktParts = [];
+      if(r.telefon){
+        kontaktParts.push('<a class="kontakt-btn tel" href="tel:'+escapeHtml(r.telefon.replace(/\s+/g,""))+'">📞 '+escapeHtml(r.telefon)+'</a>');
+      }
+      if(r.website){
+        var webHref = r.website.indexOf("http")===0 ? r.website : "https://"+r.website;
+        kontaktParts.push('<a class="kontakt-btn web" href="'+escapeHtml(webHref)+'" target="_blank" rel="noopener">🔗 Website</a>');
+      }
+      if(!r.telefon && !r.website){
+        var q = encodeURIComponent(r.name + " " + (r.ort||"") + " Kontakt Telefon");
+        kontaktParts.push('<a class="kontakt-btn search" href="https://www.google.com/search?q='+q+'" target="_blank" rel="noopener">🔍 Suchen</a>');
+      }
+      if(r.email){
+        kontaktParts.push('<a class="kontakt-btn" href="mailto:'+escapeHtml(r.email)+'">✉️ E-Mail</a>');
+      }
+      var kontaktCell = '<div class="kontakt-cell">'+kontaktParts.join("")+'</div>';
+
+      var luftCell = "", fahrCell = "", ptCell = "";
+      if(homeCoords){
+        if(r._dist!=null){
+          luftCell = '<span class="dist">'+r._dist.toFixed(1)+' km</span>';
+        } else if(!r.adresse){
+          luftCell = '<span class="dist missing">Adresse fehlt</span>';
+        } else {
+          luftCell = '<span class="dist pending">wird geokodiert…</span>';
+        }
+        if(r._driveMin!=null){
+          var driveWarnHtml = r._driveWarn ? ' <span class="warn-flag" title="Fahrstrecke wirkt im Vergleich zur Luftlinie unplausibel lang — Adresse/Koordinaten prüfen (Distanz berechnen zeigt die aufgelöste Heimatadresse; bei der Institution steht die aufgelöste Adresse im Tooltip auf dem Adressfeld).">⚠️</span>' : '';
+          fahrCell = '<span class="dist">'+Math.round(r._driveMin)+' Min. ('+r._driveKm.toFixed(0)+' km)</span>'+driveWarnHtml;
+        } else if(r._dist!=null){
+          fahrCell = '<span class="dist pending">wird berechnet…</span>';
+        } else {
+          fahrCell = '<span class="dist pending">–</span>';
+        }
+        if(r._ptMin!=null && r._ptMin >= 0){
+          var ptWarnHtml = r._ptWarn ? ' <span class="warn-flag" title="Nächstgelegene Haltestelle liegt sehr weit vom Punkt entfernt — deutet auf falsch aufgelöste Adresse hin.">⚠️</span>' : '';
+          var ptStationsTitle = (r._ptFrom && r._ptTo) ? ' title="'+escapeHtml(r._ptFrom)+' → '+escapeHtml(r._ptTo)+'"' : '';
+          ptCell = '<span class="dist"'+ptStationsTitle+'>'+Math.round(r._ptMin)+' Min.'+(r._ptTransfers!=null ? ' ('+r._ptTransfers+'x umsteigen)' : '')+'</span>'+ptWarnHtml;
+        } else if(r._ptMin === -1){
+          ptCell = '<span class="dist missing">keine Verbindung gefunden</span>';
+        } else if(r._dist!=null){
+          ptCell = '<span class="dist pending">wird berechnet…</span>';
+        } else {
+          ptCell = '<span class="dist pending">–</span>';
+        }
+      }
+
+      var fpStatus = r.freiePlaetze || "unbekannt";
+      var fpDatum = r.freiePlaetzeDatum || "";
+      var plaetzeCell =
+        '<select class="plaetze-select ' + fpStatus + '" data-id="'+rowId+'">' +
+          '<option value="unbekannt"'+(fpStatus==="unbekannt"?" selected":"")+'>⬜ unbekannt</option>' +
+          '<option value="frei"'+(fpStatus==="frei"?" selected":"")+'>🟢 frei</option>' +
+          '<option value="warteliste"'+(fpStatus==="warteliste"?" selected":"")+'>🟡 Warteliste/unklar</option>' +
+          '<option value="keine"'+(fpStatus==="keine"?" selected":"")+'>🔴 keine Plätze</option>' +
+        '</select>' +
+        '<div class="plaetze-date">geprüft am <input type="date" data-id="'+rowId+'" class="plaetzeDateInput" value="'+escapeHtml(fpDatum)+'"></div>';
+
+      html += '<tr>' +
+        '<td class="name-cell">'+escapeHtml(r.name)+(r.source==="ivse" ? '<br><span class="source-tag">IVSE-Datenbank</span>' : '')+'</td>' +
+        '<td class="plaetze-cell">'+plaetzeCell+'</td>' +
+        '<td><span class="kanton-pill-badge">'+escapeHtml(r.kanton)+'</span></td>' +
+        '<td>'+spBadge+'</td>' +
+        '<td>'+angBadges+'</td>' +
+        '<td>'+stufeBadges+'</td>' +
+        '<td>'+ivseCell+'</td>' +
+        '<td>'+kontaktCell+'</td>' +
+        '<td class="addr-cell">'+addrCell+'</td>' +
+        '<td class="bemerkung-cell">'+escapeHtml(r.bemerkung||"")+'</td>' +
+        (homeCoords ? '<td>'+luftCell+'</td><td>'+fahrCell+'</td><td>'+ptCell+'</td>' : '') +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+
+    wrap.querySelectorAll(".addrInput").forEach(function(inp){
+      inp.addEventListener("change", function(e){
+        var id = e.target.getAttribute("data-id");
+        var row = schools.find(function(s){ return s._id === id; });
+        if(!row) return;
+        row.adresse = e.target.value.trim();
+        row.plz = ""; row.ort = "";
+        row.lat = null; row.lon = null;
+        row._driveMin = null; row._driveKm = null; row._driveWarn = false;
+        row._ptMin = null; row._ptTransfers = null; row._ptWarn = false;
+        row._geoLabel = "";
+        setDistStatus("Adresse für „"+row.name+"“ gespeichert. Klicke erneut auf „Distanz berechnen“.", "ok");
+        saveToGist();
+      });
+    });
+
+    wrap.querySelectorAll(".plaetze-select").forEach(function(sel){
+      sel.addEventListener("change", function(e){
+        var id = e.target.getAttribute("data-id");
+        var row = schools.find(function(s){ return s._id === id; });
+        if(!row) return;
+        row.freiePlaetze = e.target.value;
+        // Datum automatisch auf heute setzen, falls noch keins gesetzt ist
+        if(!row.freiePlaetzeDatum){
+          row.freiePlaetzeDatum = new Date().toISOString().slice(0,10);
+        }
+        e.target.className = "plaetze-select " + row.freiePlaetze;
+        saveToGist();
+      });
+    });
+
+    wrap.querySelectorAll(".plaetzeDateInput").forEach(function(inp){
+      inp.addEventListener("change", function(e){
+        var id = e.target.getAttribute("data-id");
+        var row = schools.find(function(s){ return s._id === id; });
+        if(!row) return;
+        row.freiePlaetzeDatum = e.target.value;
+        saveToGist();
+      });
+    });
+
+    window._lastFiltered = filtered;
+  }
+
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function setImportStatus(msg, kind){
+    var el = document.getElementById("importStatus");
+    el.textContent = msg;
+    el.className = "status-line" + (kind ? " "+kind : "");
+  }
+
+  function withIds(rows){
+    return rows.map(function(r){
+      r._id = "r"+(idCounter++);
+      if(r.adresse === undefined) r.adresse = "";
+      if(r.plz === undefined) r.plz = "";
+      if(r.ort === undefined) r.ort = "";
+      if(r.lat === undefined) r.lat = null;
+      if(r.lon === undefined) r.lon = null;
+      if(r.bereich_raw === undefined) r.bereich_raw = "";
+      if(r.telefon === undefined) r.telefon = "";
+      if(r.website === undefined) r.website = "";
+      if(r.email === undefined) r.email = "";
+      if(r.freiePlaetze === undefined) r.freiePlaetze = "unbekannt";
+      if(r.freiePlaetzeDatum === undefined) r.freiePlaetzeDatum = "";
+      if(r.schwerpunkt === undefined || r.schwerpunkt === "") r.schwerpunkt = "Nicht klassifiziert";
+      return r;
+    });
+  }
+
+  function addRows(rows, replace){
+    if(replace){ schools = []; homeCoords = null; }
+    schools = schools.concat(withIds(rows));
+    render();
+  }
+
+  document.getElementById("btnLoadStarter").addEventListener("click", function(){
+    addRows(JSON.parse(JSON.stringify(STARTER_DATA)), true);
+    setImportStatus(STARTER_DATA.length + " Institutionen geladen.", "ok");
+  });
+  document.getElementById("btnClear").addEventListener("click", function(){
+    schools = []; homeCoords = null; render();
+    setImportStatus("Liste geleert.", "");
+  });
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var rows = parseCsv(ev.target.result);
+        addRows(rows, false);
+        setImportStatus(rows.length + " Zeilen aus " + file.name + " importiert.", "ok");
+      }catch(err){
+        setImportStatus("Fehler beim Einlesen der Datei: " + err.message, "err");
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+  });
+  document.getElementById("btnAppendPaste").addEventListener("click", function(){
+    var txt = document.getElementById("pasteArea").value;
+    if(!txt.trim()){ setImportStatus("Kein Text zum Einfügen vorhanden.", "err"); return; }
+    try{
+      var rows = parseCsv(txt);
+      addRows(rows, false);
+      setImportStatus(rows.length + " Zeilen hinzugefügt.", "ok");
+      saveToGist();
+    }catch(err){ setImportStatus("Fehler beim Einlesen: " + err.message, "err"); }
+  });
+  document.getElementById("btnReplacePaste").addEventListener("click", function(){
+    var txt = document.getElementById("pasteArea").value;
+    if(!txt.trim()){ setImportStatus("Kein Text zum Einfügen vorhanden.", "err"); return; }
+    try{
+      var rows = parseCsv(txt);
+      addRows(rows, true);
+      setImportStatus("Liste ersetzt: " + rows.length + " Zeilen.", "ok");
+      saveToGist();
+    }catch(err){ setImportStatus("Fehler beim Einlesen: " + err.message, "err"); }
+  });
+  document.getElementById("btnExportCsv").addEventListener("click", function(){
+    download("institutionen_liste.csv", toCsv(schools));
+  });
+  document.getElementById("btnExportFiltered").addEventListener("click", function(){
+    download("institutionen_gefiltert.csv", toCsv(window._lastFiltered || []));
+  });
+
+  document.getElementById("githubTokenInput").value = getGithubToken();
+  document.getElementById("btnSaveToken").addEventListener("click", function(){
+    var t = document.getElementById("githubTokenInput").value.trim();
+    setGithubToken(t);
+    setSyncStatus(t ? "Token gespeichert (nur lokal in diesem Browser). Änderungen werden ab jetzt automatisch in den Gist geschrieben." : "Token entfernt. Änderungen bleiben ab jetzt nur lokal.", "ok");
+  });
+  document.getElementById("btnSyncNow").addEventListener("click", function(){
+    loadFromGist(true);
+  });
+
+  document.getElementById("searchText").addEventListener("input", render);
+  document.getElementById("radiusKm").addEventListener("input", render);
+  document.getElementById("radiusBasis").addEventListener("change", render);
+
+  // Driving route (distance + duration) via the free public OSRM demo server.
+  // Returns {ok:true, km, min} or {ok:false, reason, detail}
+  async function drivingRoute(lat1, lon1, lat2, lon2){
+    var url = "https://routing.openstreetmap.de/routed-car/route/v1/driving/" +
+      lon1 + "," + lat1 + ";" + lon2 + "," + lat2 + "?overview=false";
+    var res;
+    try{
+      res = await fetch(url);
+    }catch(e){
+      return {ok:false, reason:"network", detail: e.message};
+    }
+    if(!res.ok) return {ok:false, reason:"http", detail: res.status};
+    var data;
+    try{ data = await res.json(); }
+    catch(e){ return {ok:false, reason:"network", detail:"Antwort konnte nicht gelesen werden"}; }
+    if(data && data.routes && data.routes.length){
+      return {ok:true, km: data.routes[0].distance/1000, min: data.routes[0].duration/60};
+    }
+    return {ok:false, reason:"notfound"};
+  }
+
+  // Public-transport route via transport.opendata.ch (the free, open Swiss timetable API).
+  // Finds the nearest station to each point, then queries a concrete connection for the
+  // next school day at 07:30. Returns {ok:true, min, transfers, fromStation, toStation}
+  // or {ok:false, reason, detail}. Note: this is stop-to-stop, not door-to-door (no
+  // walking time to/from the stations is added) — kept simple and labelled as such in the UI.
+  async function nearestStation(lat, lon){
+    var url = "https://transport.opendata.ch/v1/locations?x=" + lat + "&y=" + lon + "&type=station";
+    var res;
+    try{ res = await fetch(url); }
+    catch(e){ return {ok:false, reason:"network", detail: e.message}; }
+    if(!res.ok) return {ok:false, reason:"http", detail: res.status};
+    var data;
+    try{ data = await res.json(); }
+    catch(e){ return {ok:false, reason:"network", detail:"Antwort konnte nicht gelesen werden"}; }
+    if(data && data.stations && data.stations.length && data.stations[0].name){
+      var st = data.stations[0];
+      var stLat = st.coordinate ? st.coordinate.x : null; // API: x=Breitengrad, y=Laengengrad
+      var stLon = st.coordinate ? st.coordinate.y : null;
+      var walkKm = (stLat!=null && stLon!=null) ? haversine(lat, lon, stLat, stLon) : null;
+      return {ok:true, name: st.name, lat: stLat, lon: stLon, walkKm: walkKm};
+    }
+    return {ok:false, reason:"notfound"};
+  }
+
+  function nextSchoolDayAt(hour, minute){
+    var d = new Date();
+    d.setDate(d.getDate() + 1); // ab morgen
+    while(d.getDay() === 0 || d.getDay() === 6){ d.setDate(d.getDate() + 1); } // Wochenende ueberspringen
+    var yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,"0"), dd = String(d.getDate()).padStart(2,"0");
+    return { date: yyyy+"-"+mm+"-"+dd, time: String(hour).padStart(2,"0")+":"+String(minute).padStart(2,"0") };
+  }
+
+  // Schwelle, ab der eine "naechste" Haltestelle als verdaechtig weit weg gilt --
+  // deutet meist auf eine falsch geokodierte Adresse hin, nicht auf einen echten ländlichen Fall.
+  var IMPLAUSIBLE_WALK_KM = 8;
+
+  async function publicTransitRoute(lat1, lon1, lat2, lon2){
+    var fromStation = await nearestStation(lat1, lon1);
+    if(!fromStation.ok) return fromStation;
+    var toStation = await nearestStation(lat2, lon2);
+    if(!toStation.ok) return toStation;
+    if(fromStation.name === toStation.name) return {ok:false, reason:"notfound"};
+
+    var when = nextSchoolDayAt(7, 30);
+    var url = "https://transport.opendata.ch/v1/connections?from=" + encodeURIComponent(fromStation.name) +
+      "&to=" + encodeURIComponent(toStation.name) + "&date=" + when.date + "&time=" + when.time + "&limit=1";
+    var res;
+    try{ res = await fetch(url); }
+    catch(e){ return {ok:false, reason:"network", detail: e.message}; }
+    if(!res.ok) return {ok:false, reason:"http", detail: res.status};
+    var data;
+    try{ data = await res.json(); }
+    catch(e){ return {ok:false, reason:"network", detail:"Antwort konnte nicht gelesen werden"}; }
+    if(data && data.connections && data.connections.length){
+      var c = data.connections[0];
+      // duration format "00d01:23:00"
+      var m = /(\d+)d(\d+):(\d+):(\d+)/.exec(c.duration || "");
+      var minutes = m ? (parseInt(m[1])*24*60 + parseInt(m[2])*60 + parseInt(m[3])) : null;
+      if(minutes==null) return {ok:false, reason:"notfound"};
+      var suspicious = (fromStation.walkKm!=null && fromStation.walkKm > IMPLAUSIBLE_WALK_KM) ||
+                        (toStation.walkKm!=null && toStation.walkKm > IMPLAUSIBLE_WALK_KM);
+      return {
+        ok:true, min: minutes, transfers: c.transfers,
+        fromStation: fromStation.name, toStation: toStation.name,
+        fromWalkKm: fromStation.walkKm, toWalkKm: toStation.walkKm,
+        suspicious: suspicious
+      };
+    }
+    return {ok:false, reason:"notfound"};
+  }
+
+  var distCancelled = false;
+
+  function showCancelButton(show){
+    document.getElementById("btnCancelDist").style.display = show ? "inline-block" : "none";
+  }
+
+  document.getElementById("btnCancelDist").addEventListener("click", function(){
+    distCancelled = true;
+    setDistStatus("Abgebrochen. Bereits berechnete Distanzen bleiben erhalten.", "");
+    showCancelButton(false);
+    document.getElementById("btnCalcDist").disabled = false;
+  });
+
+  document.getElementById("btnCalcDist").addEventListener("click", async function(){
+    var addr = document.getElementById("homeAddress").value.trim();
+    if(!addr){ setDistStatus("Bitte zuerst eine Adresse eingeben.", "err"); return; }
+    var btn = document.getElementById("btnCalcDist");
+    btn.disabled = true;
+    distCancelled = false;
+    showCancelButton(true);
+    setDistStatus("Adresse wird geokodiert …", "");
+
+    var homeResult = await geocode(addr + ", Schweiz");
+    if(!homeResult.ok){
+      setDistStatus(geocodeErrorMessage(homeResult), "err");
+      btn.disabled = false;
+      showCancelButton(false);
+      return;
+    }
+    homeCoords = homeResult.coords;
+    homeCoordsLabel = homeResult.label || "";
+    render();
+    updateHomeLabel();
+
+    // Only process the currently filtered/visible list — respects the person's
+    // filter choices and keeps load on the free public services reasonable.
+    var targets = schools.filter(matchesFilters);
+
+    // Step 1: geocode any missing school addresses (Luftlinie basis)
+    var toGeocode = targets.filter(function(r){ return r.adresse && (r.lat==null || r.lon==null); });
+    var geoFailCount = 0, geoFailMsg = "";
+    for(var i=0;i<toGeocode.length;i++){
+      if(distCancelled) break;
+      var r = toGeocode[i];
+      var res2 = await geocode(r.adresse + ", Schweiz");
+      if(res2.ok){ r.lat = res2.coords.lat; r.lon = res2.coords.lon; r._geoLabel = res2.label || ""; }
+      else { geoFailCount++; geoFailMsg = geocodeErrorMessage(res2); }
+      render();
+      setDistStatus("Geokodiere Schuladressen … (" + (i+1) + "/" + toGeocode.length + ")", "");
+      if(i < toGeocode.length-1) await sleep(1100);
+    }
+
+    // Step 2: driving time/distance for schools that now have coordinates
+    if(!distCancelled){
+      var toRoute = targets.filter(function(r){ return r.lat!=null && r.lon!=null && r._driveMin==null; });
+      for(var j=0;j<toRoute.length;j++){
+        if(distCancelled) break;
+        var r2 = toRoute[j];
+        var routeRes = await drivingRoute(homeCoords.lat, homeCoords.lon, r2.lat, r2.lon);
+        if(routeRes.ok){
+          r2._driveKm = routeRes.km; r2._driveMin = routeRes.min;
+          // Plausibilitaets-Check: Fahrstrecke deutlich >> Luftlinie deutet meist auf
+          // eine falsch aufgeloeste Adresse hin, nicht auf einen echten Umweg.
+          var luft = (homeCoords && r2.lat!=null) ? haversine(homeCoords.lat, homeCoords.lon, r2.lat, r2.lon) : null;
+          r2._driveWarn = (luft!=null && luft > 3 && routeRes.km > luft * 2.2);
+        }
+        render();
+        setDistStatus("Berechne Fahrzeit (Auto) … (" + (j+1) + "/" + toRoute.length + ")", "");
+        if(j < toRoute.length-1) await sleep(600);
+      }
+    }
+
+    // Step 3: public-transport connection for schools that now have coordinates
+    if(!distCancelled){
+      var toTransit = targets.filter(function(r){ return r.lat!=null && r.lon!=null && r._ptMin==null; });
+      for(var k=0;k<toTransit.length;k++){
+        if(distCancelled) break;
+        var r3 = toTransit[k];
+        var ptRes = await publicTransitRoute(homeCoords.lat, homeCoords.lon, r3.lat, r3.lon);
+        if(ptRes.ok){
+          r3._ptMin = ptRes.min; r3._ptTransfers = ptRes.transfers;
+          r3._ptWarn = ptRes.suspicious;
+          r3._ptFrom = ptRes.fromStation; r3._ptTo = ptRes.toStation;
+        }
+        else { r3._ptMin = -1; } // -1 = versucht, aber keine Verbindung gefunden
+        render();
+        setDistStatus("Berechne ÖV-Verbindung … (" + (k+1) + "/" + toTransit.length + ")", "");
+        if(k < toTransit.length-1) await sleep(700);
+      }
+    }
+
+    showCancelButton(false);
+    btn.disabled = false;
+
+    if(distCancelled){
+      setDistStatus("Abgebrochen. Bereits berechnete Distanzen/Fahrzeiten bleiben erhalten.", "");
+    } else if(geoFailCount > 0){
+      setDistStatus("Fertig — " + geoFailCount + " Adresse(n) konnten nicht gefunden werden. " + geoFailMsg, "ok");
+    } else {
+      setDistStatus("Fertig. Luftlinie via OpenStreetMap/Nominatim, Fahrzeit via OSRM (Auto), ÖV via transport.opendata.ch (Bahnhof–Bahnhof, Beispielverbindung nächster Schultag 07:30, ohne aktuelle Störungen).", "ok");
+    }
+  });
+
+  document.getElementById("btnClearGeoCache").addEventListener("click", function(){
+    geoCache = {};
+    saveCache(geoCache);
+    // Auch alle bereits berechneten Distanz-/Fahrzeit-/OeV-Werte im aktuellen Speicher verwerfen
+    schools.forEach(function(r){
+      r.lat = null; r.lon = null; r._geoLabel = "";
+      r._dist = null; r._driveMin = null; r._driveKm = null; r._driveWarn = false;
+      r._ptMin = null; r._ptTransfers = null; r._ptWarn = false;
+    });
+    homeCoords = null; homeCoordsLabel = "";
+    updateHomeLabel();
+    render();
+    setDistStatus("Cache geleert. Bitte Adresse erneut eingeben und „Distanz berechnen“ klicken.", "ok");
+  });
+
+  function updateHomeLabel(){
+    var el = document.getElementById("homeAddressLabel");
+    if(homeCoordsLabel){
+      el.textContent = "Gefunden als: " + homeCoordsLabel + " (" + homeCoords.lat.toFixed(4) + ", " + homeCoords.lon.toFixed(4) + ") — falls das nicht stimmt, Adresse präzisieren (z. B. mit PLZ/Hausnummer) und neu berechnen.";
+      el.className = "status-line";
+    } else {
+      el.textContent = "";
+    }
+  }
+
+  function setDistStatus(msg, kind){
+    var el = document.getElementById("distStatus");
+    el.textContent = msg;
+    el.className = "status-line" + (kind ? " "+kind : "");
+  }
+
+  // ---------- GIST SYNC ----------
+  function getGithubToken(){
+    try{ return localStorage.getItem(GITHUB_TOKEN_KEY) || ""; }catch(e){ return ""; }
+  }
+  function setGithubToken(t){
+    try{ localStorage.setItem(GITHUB_TOKEN_KEY, t || ""); }catch(e){}
+  }
+
+  function setSyncStatus(msg, kind){
+    var el = document.getElementById("syncStatus");
+    if(!el) return;
+    el.textContent = msg;
+    el.className = "status-line" + (kind ? " "+kind : "");
+  }
+
+  async function loadFromGist(showStatus){
+    if(showStatus) setSyncStatus("Lade aktuellen Stand aus Gist …", "");
+    var res;
+    try{
+      res = await fetch(GIST_RAW_URL + "?t=" + Date.now(), { cache: "no-store" }); // Cache-Buster: immer den neusten Stand holen
+    }catch(e){
+      if(showStatus) setSyncStatus("Gist nicht erreichbar (offline?) — zeige den zuletzt bekannten Stand.", "err");
+      return false;
+    }
+    if(!res.ok){
+      if(showStatus) setSyncStatus("Gist antwortete mit Fehler " + res.status + ".", "err");
+      return false;
+    }
+    var text = await res.text();
+    var rows = parseCsv(text);
+    if(!rows.length){
+      if(showStatus) setSyncStatus("Gist ist leer oder konnte nicht gelesen werden.", "err");
+      return false;
+    }
+    addRows(rows, true);
+    var now = new Date();
+    var stamp = now.toLocaleDateString("de-CH") + " " + now.toLocaleTimeString("de-CH", {hour:"2-digit", minute:"2-digit"});
+    setSyncStatus("Gemeinsamer Stand geladen (" + rows.length + " Institutionen) — synchronisiert um " + stamp + ".", "ok");
+    return true;
+  }
+
+  async function saveToGist(){
+    var token = getGithubToken();
+    if(!token) return; // kein Token hinterlegt -> nur lokal, kein Zurueckschreiben
+    var csv = toCsv(schools);
+    setSyncStatus("Speichere Änderung in Gist …", "");
+    var res;
+    try{
+      res = await fetch(GIST_API_URL, {
+        method: "PATCH",
+        headers: {
+          "Authorization": "token " + token,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: csv } } })
+      });
+    }catch(e){
+      setSyncStatus("Speichern fehlgeschlagen (Netzwerk): " + e.message, "err");
+      return;
+    }
+    if(!res.ok){
+      var detail = res.status === 401 ? "Token ungültig/abgelaufen." : ("Fehler " + res.status);
+      setSyncStatus("Speichern in Gist fehlgeschlagen — " + detail + " Änderung bleibt lokal erhalten.", "err");
+      return;
+    }
+    var now = new Date();
+    var stamp = now.toLocaleTimeString("de-CH", {hour:"2-digit", minute:"2-digit"});
+    setSyncStatus("Änderung gespeichert in Gist ✓ (" + stamp + ") — für alle sichtbar.", "ok");
+  }
+
+  // ---------- INIT ----------
+  buildKantonDropdown();
+  buildPillGroup("schwerpunktPills", SCHWERPUNKTE, activeSchwerpunkt);
+  buildPillGroup("angebotPills", ANGEBOT_OPTIONS, activeAngebot);
+  buildPillGroup("stufePills", STUFE_OPTIONS, activeStufe);
+  buildIvsePills();
+  addRows(JSON.parse(JSON.stringify(STARTER_DATA)), true); // Fallback: eingebetteter Stand, falls Gist nicht erreichbar
+  setSyncStatus("Eingebetteter Stand (" + STARTER_DATA.length + " Institutionen) — versuche zu synchronisieren …", "");
+  loadFromGist(true);
+
+})();
+</script>
+
+</body>
+</html>
