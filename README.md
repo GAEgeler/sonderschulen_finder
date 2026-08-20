@@ -4,7 +4,7 @@ Suchmaske für Sonderschulen/Institutionen in Kanton Schwyz und den Nachbarkanto
 
 ## Wie öffne ich das Tool?
 
-👉 **\[Link zum Tool einfügen, sobald gehostet]**
+👉 **\[https://gaegeler.github.io/sonderschulen\_finder/]**
 
 Kein Login nötig, funktioniert im Browser (Chrome oder Edge empfohlen).
 
