@@ -1,0 +1,45 @@
+## Für die Administration (technischer Hintergrund)
+
+Dieser Abschnitt ist nur relevant, wenn du das Tool wartest oder Daten grösserer Art aktualisierst – für die tägliche Nutzung nicht nötig.
+
+### Wie die Daten funktionieren
+
+- Die eigentlichen Institutionsdaten liegen **nicht** in der Tool-Datei selbst, sondern in einem **GitHub Gist** (einer einzelnen, frei zugänglichen Textdatei im Netz): `[Gist-Link einfügen]`
+- Beim Öffnen lädt das Tool automatisch den neusten Stand aus diesem Gist.
+- Einzelne Änderungen (Adresse, Freie Plätze, Bemerkung) werden automatisch dorthin zurückgeschrieben – **aber nur**, wenn im Tool unter "Daten verwalten" (Link oben rechts) ein **GitHub-Token** hinterlegt ist. Ohne Token bleiben Änderungen nur lokal im jeweiligen Browser.
+- Der Token wird einmalig unter github.com/settings/tokens erstellt (Berechtigung **nur** "gist" ankreuzen) und lokal im Browser gespeichert – nie an Dritte weitergeben ausser an Personen, die wirklich schreibend zugreifen sollen.
+
+### Grössere Daten-Updates (z. B. neue Excel-Liste)
+
+Bei einer kompletten Aktualisierung (nicht nur einzelne Felder):
+1. Neue/bereinigte Liste als CSV vorbereiten (Format: Semikolon-getrennt, gleiche Spalten wie der bisherige Export – am einfachsten über "Aktuelle Liste als CSV exportieren" im Tool als Vorlage nehmen)
+2. Gist öffnen → "Edit" → Inhalt komplett ersetzen → "Update public gist"
+3. Alle sehen den neuen Stand beim nächsten Öffnen/Neuladen der Seite automatisch
+
+### Tool selbst aktualisieren (bei neuen Funktionen)
+
+Das Tool ist als `index.html` über **GitHub Pages** gehostet: `[Pages-Link einfügen]`
+
+Ablauf für ein Update der Tool-Datei selbst:
+```
+git add .
+git commit -m "Kurze Beschreibung der Änderung"
+git push
+```
+
+Bei Fehlermeldungen wie "rejected"/"non-fast-forward" (z. B. wenn zwischendurch anderswo etwas geändert wurde):
+```
+git pull origin main --no-edit
+git push
+```
+
+Bei einem hartnäckigen Konflikt, wenn der lokale Stand sicher der richtige ist:
+```
+git push origin main --force
+```
+
+### Bekannte Einschränkungen
+
+- Kein Schutz vor gleichzeitigem Bearbeiten (wer zuletzt speichert, gewinnt).
+- GitHub Pages ist ohne Zusatzaufwand **öffentlich** erreichbar (kein Passwortschutz) – für die aktuell grösstenteils öffentlichen Institutionsdaten vertretbar, für sensiblere Inhalte nicht geeignet.
+- Freie-Plätze-Angaben sind manuell gepflegt, kein automatischer Abgleich mit den Institutions-Websites.
